@@ -1,3 +1,4 @@
+using EFCore.DomainModelGenerator;
 using Microsoft.EntityFrameworkCore;
 using SampleProgram.Domains;
 using SampleProgram.Repository;
