@@ -8,7 +8,10 @@ public class SampleGenerator : IIncrementalGenerator
   public void Initialize(IncrementalGeneratorInitializationContext context)
   {
     context.RegisterPostInitializationOutput(static ctx =>
-      ctx.AddSource("DomainContextAttribute.g.cs", DomainContextAttributeSource.Source));
+    {
+      ctx.AddSource("DomainContextAttribute.g.cs", DomainContextAttributeSource.Source);
+      ctx.AddSource("DomainSetAttribute.g.cs", DomainSetAttributeSource.Source);
+    });
     var cnt = 0;
     var source = context.SyntaxProvider.CreateSyntaxProvider(
       (_, _) => cnt++ == 0,
