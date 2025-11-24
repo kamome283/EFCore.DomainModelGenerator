@@ -1,7 +1,10 @@
 using EFCore.DomainModelGenerator;
+using Microsoft.EntityFrameworkCore;
 using SampleProgram;
+using SampleProgram.Repository;
 
 var builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddDbContext<PrimaryDb>(options => { options.UseSqlite("Data Source=:memory:"); });
 builder.Services.AddHostedService<Worker>();
 
 var host = builder.Build();
