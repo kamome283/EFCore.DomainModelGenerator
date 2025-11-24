@@ -1,10 +1,15 @@
 using Microsoft.EntityFrameworkCore;
+using SampleProgram;
 using SampleProgram.Domains;
 using SampleProgram.Repository;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services
-  .AddDbContext<PrimaryDb>(options => { options.UseSqlite("Data Source=test.db"); })
+  .AddDbContext<PrimaryDb>(options =>
+  {
+    options.UseSqlite("Data Source=test.db");
+    options.UseAsyncSeeding(SeedingHelper.SeedDataAsync);
+  })
   .AddDomains()
   .AddScoped<WorkerImpl>()
   .AddHostedService<WorkerWrapper>();
