@@ -1,15 +1,13 @@
-using EFCore.DomainModelGenerator;
 using Microsoft.EntityFrameworkCore;
 using SampleProgram.Domains;
 using SampleProgram.Repository;
 
 var builder = Host.CreateApplicationBuilder(args);
-builder.Services.AddDbContext<PrimaryDb>(options => { options.UseSqlite("Data Source=test.db"); });
-builder.Services.AddScoped<CustomersDomain>();
-builder.Services.AddScoped<StaffsDomain>();
-builder.Services.AddScoped<WorkerImpl>();
-builder.Services.AddHostedService<WorkerWrapper>();
-
+builder.Services
+  .AddDbContext<PrimaryDb>(options => { options.UseSqlite("Data Source=test.db"); })
+  .AddDomains()
+  .AddScoped<WorkerImpl>()
+  .AddHostedService<WorkerWrapper>();
 var host = builder.Build();
 host.Run();
 
