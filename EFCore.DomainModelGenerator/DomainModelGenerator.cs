@@ -48,26 +48,7 @@ public class DomainModelGenerator : IIncrementalGenerator
         var metadata = GetDomainSetMetadata(sym);
         return metadata is not null ? new[] { metadata } : [];
       });
-    // var sets = domainSets.ToArray();
-    // var a = new DomainModelSource()
-    // {
-    //   Namespace = "SampleProgram.Domains",
-    //   ContextType = typeSymbol,
-    //   DomainSetMetadata = sets,
-    //   DomainClassName = "StaffsDomain"
-    // };
-    // context.AddSource("StaffsDomain.g.cs", a.GenerateCode());
-    // var b = new DomainModelSource()
-    // {
-    //   Namespace = "SampleProgram.Domains",
-    //   ContextType = typeSymbol,
-    //   DomainSetMetadata = sets,
-    //   DomainClassName = "CustomersDomain"
-    // };
-    // context.AddSource("CustomersDomain.g.cs", b.GenerateCode());
 
-    // context.AddSource("CastsDomain.g.cs", a.GenerateCode());
-    //
     foreach (var group in domainSets.GroupBy(x => x.DomainName))
     {
       var domainClassName = $"{group.Key}Domain";
