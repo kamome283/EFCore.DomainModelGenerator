@@ -10,7 +10,7 @@ public partial class StaffsDomain
   {
     var start = date.Date;
     var end = date.AddDays(1);
-    return StaffSchedules
+    return Schedules
       .Where(x => start <= x.Start && x.Start < end)
       .Include(x => x.Staff.Details)
       .Select(x => x.Staff)
