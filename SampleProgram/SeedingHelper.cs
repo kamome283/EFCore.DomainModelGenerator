@@ -9,6 +9,8 @@ internal static class SeedingHelper
   public static async Task SeedDataAsync(DbContext boxedDb, bool _, CancellationToken ct)
   {
     var db = (PrimaryDb)boxedDb;
+    if (await db.Staffs.AnyAsync(ct)) return;
+
     var staffs = new[]
     {
       new Staff
