@@ -88,16 +88,22 @@ public class DomainModelGenerator : IIncrementalGenerator
       .Value as string;
     domainName ??= prop.Name;
 
-    var isPrivate = attr
+    var mappedName = attr
       .ConstructorArguments
       .ElementAtOrDefault(1)
+      .Value as string;
+    mappedName ??= prop.Name;
+
+    var isPrivate = attr
+      .ConstructorArguments
+      .ElementAtOrDefault(2)
       .Value is true;
 
     return new DomainSetMetadata
     {
       DomainName = domainName,
       OriginalName = prop.Name,
-      MappedName = prop.Name,
+      MappedName = mappedName,
       ElementType = prop.Type,
       IsPrivate = isPrivate,
     };
