@@ -78,6 +78,7 @@ public class DomainModelGenerator : IIncrementalGenerator
           DeclaredAccessibility: Accessibility.Public or Accessibility.Internal,
           CanBeReferencedByName: true,
         } prop) return null;
+
     if (prop.Type is not INamedTypeSymbol { IsGenericType: true, ConstructedFrom.Name: "DbSet" } propType)
       throw new InvalidOperationException("The type of domain set is not as expected");
 
