@@ -3,12 +3,12 @@ using Microsoft.CodeAnalysis;
 
 namespace EFCore.DomainModelGenerator;
 
-internal class DomainModelSource
+internal class DomainModelSource(string ns, INamedTypeSymbol contextType, DomainMetadata domain)
 {
-  public string Namespace { get; set; } = null!;
-  public string DomainClassName { get; set; } = null!;
-  public INamedTypeSymbol ContextType { get; set; } = null!;
-  public IEnumerable<DomainSetMetadata> DomainSetMetadata { get; set; } = null!;
+  private string Namespace { get; } = ns;
+  private INamedTypeSymbol ContextType { get; } = contextType;
+  private string DomainClassName { get; } = domain.DomainClassName;
+  private IEnumerable<DomainSetMetadata> DomainSetMetadata { get; } = domain.DomainSetMetadata;
 
   public string GenerateCode()
   {
@@ -47,13 +47,4 @@ internal class DomainModelSource
 
     return sb.ToString();
   }
-}
-
-internal record DomainSetMetadata
-{
-  public string DomainName { get; set; } = null!;
-  public string MappedName { get; set; } = null!;
-  public string OriginalName { get; set; } = null!;
-  public ITypeSymbol ElementType { get; set; } = null!;
-  public bool IsPrivate { get; set; }
 }
