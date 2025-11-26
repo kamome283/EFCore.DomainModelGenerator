@@ -100,9 +100,14 @@ public class DomainModelGenerator : IIncrementalGenerator
       .Value as string;
     mappedName ??= prop.Name;
 
-    var isPrivate = attr
+    var asDbSet = attr
       .ConstructorArguments
       .ElementAtOrDefault(2)
+      .Value is true;
+
+    var isPrivate = attr
+      .ConstructorArguments
+      .ElementAtOrDefault(3)
       .Value is true;
 
     return new DomainSetMetadata
@@ -111,6 +116,7 @@ public class DomainModelGenerator : IIncrementalGenerator
       OriginalName = prop.Name,
       MappedName = mappedName,
       ElementType = prop.Type,
+      AsDbSet = asDbSet,
       IsPrivate = isPrivate,
     };
   }
