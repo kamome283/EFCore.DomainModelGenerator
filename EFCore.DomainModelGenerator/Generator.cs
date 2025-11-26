@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 namespace EFCore.DomainModelGenerator;
 
 [Generator(LanguageNames.CSharp)]
-public class DomainModelGenerator : IIncrementalGenerator
+public class Generator : IIncrementalGenerator
 {
   private const string GeneratorNamespace = "EFCore.DomainModelGenerator";
 
