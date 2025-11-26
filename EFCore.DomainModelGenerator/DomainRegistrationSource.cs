@@ -1,12 +1,11 @@
 using System.Text;
-using Microsoft.CodeAnalysis;
 
 namespace EFCore.DomainModelGenerator;
 
-internal class DomainRegistrationSource
+internal class DomainRegistrationSource(string ns, DomainMetadata[] domains)
 {
-  public string Namespace { get; set; } = null!;
-  public IEnumerable<ISymbol> DomainModelSymbols { get; set; } = null!;
+  private string Namespace { get; } = ns;
+  private IEnumerable<string> DomainClassNames { get; } = domains.Select(x => x.DomainClassName);
 
   public string GenerateCode()
   {
@@ -30,7 +29,7 @@ internal class DomainRegistrationSource
 
   private string GenerateRegistrationCode()
   {
-    var codes = DomainModelSymbols.Select(GenerateSingleRegistrationCode);
+    var codes = DomainClassNames.Select(GenerateSingleRegistrationCode);
     var sb = new StringBuilder();
     foreach (var code in codes)
     {
@@ -40,9 +39,8 @@ internal class DomainRegistrationSource
     return sb.ToString();
   }
 
-  private static string GenerateSingleRegistrationCode(ISymbol symbol)
+  private static string GenerateSingleRegistrationCode(string domainClassName)
   {
-    var typeExpr = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-    return $"services.AddScoped<{typeExpr}>();";
+    return $"services.AddScoped<{domainClassName}>();";
   }
 }

@@ -49,18 +49,20 @@ public class DomainModelGenerator : IIncrementalGenerator
         return metadata is not null ? new[] { metadata } : [];
       });
 
-    foreach (var group in domainSets.GroupBy(x => x.DomainName))
-    {
-      var domainClassName = $"{group.Key}Domain";
-      var domainModelSource = new DomainModelSource
+    var domains = domainSets
+      .GroupBy(x => x.DomainName)
+      .Select(g => new DomainMetadata()
       {
-        Namespace = ns,
-        ContextType = typeSymbol,
-        DomainSetMetadata = group,
-        DomainClassName = domainClassName,
-      };
-      var code = domainModelSource.GenerateCode();
-      context.AddSource($"{domainClassName}.g.cs", code);
+        DomainClassName = $"{g.Key}Domain",
+        DomainSetMetadata = g,
+      })
+      .ToArray();
+
+    // Emission of domain models
+    foreach (var domain in domains)
+    {
+      var domainModelSource = new DomainModelSource(ns, typeSymbol, domain);
+      context.AddSource($"{domain.DomainClassName}.g.cs", domainModelSource.GenerateCode());
     }
   }
 
