@@ -1,3 +1,4 @@
+using EFCore.DomainModelGenerator.CodeGeneration;
 using EFCore.DomainModelGenerator.ConstantSource;
 using Microsoft.CodeAnalysis;
 
@@ -62,12 +63,12 @@ public class DomainModelGenerator : IIncrementalGenerator
     // Emission of domain models
     foreach (var domain in domains)
     {
-      var domainModelSource = new DomainModelSource(ns, typeSymbol, domain);
+      var domainModelSource = new DomainModelGeneration(ns, typeSymbol, domain);
       context.AddSource($"{domain.DomainClassName}.g.cs", domainModelSource.GenerateCode());
     }
 
     // Emission of domain registration helper
-    var domainRegistrationSource = new DomainRegistrationSource(ns, domains);
+    var domainRegistrationSource = new DomainRegistratorGeneration(ns, domains);
     context.AddSource("DomainRegistrationHelper.g.cs", domainRegistrationSource.GenerateCode());
   }
 

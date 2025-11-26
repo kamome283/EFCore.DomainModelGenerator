@@ -1,9 +1,9 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace EFCore.DomainModelGenerator;
+namespace EFCore.DomainModelGenerator.CodeGeneration;
 
-internal class DomainModelSource(string ns, INamedTypeSymbol contextType, DomainMetadata domain)
+internal class DomainModelGeneration(string ns, INamedTypeSymbol contextType, DomainMetadata domain)
 {
   private string Namespace { get; } = ns;
   private INamedTypeSymbol ContextType { get; } = contextType;
