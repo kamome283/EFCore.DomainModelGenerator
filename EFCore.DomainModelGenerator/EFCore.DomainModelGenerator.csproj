@@ -11,6 +11,19 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DevelopmentDependency>true</DevelopmentDependency>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+
+    <Version>0.0.1</Version>
+    <Authors>kamome283</Authors>
+    <Description>Source generator for automatic domain model creation from your EFCore
+      context
+    </Description>
+    <PackageProjectUrl>https://github.com/kamome283/EFCore.DomainModelGenerator</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/kamome283/EFCore.DomainModelGenerator</RepositoryUrl>
+    <PackageTags>efcore; domain-model</PackageTags>
+    <PackageId>kamome283.EFCore.DomainModelGenerator</PackageId>
+    <Title>EFCore.DomainModelGenerator</Title>
+    <Copyright>Copyright (c) kamome283 2025</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
