@@ -1,4 +1,4 @@
-namespace EFCore.DomainModelGenerator;
+namespace EFCore.DomainModelGenerator.ConstantSource;
 
 internal static class DomainContextAttributeSource
 {

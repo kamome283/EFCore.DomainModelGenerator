@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace EFCore.DomainModelGenerator;
+namespace EFCore.DomainModelGenerator.CodeGeneration;
 
-internal class DomainRegistrationSource(string ns, DomainMetadata[] domains)
+internal class DomainRegistratorGeneration(string ns, DomainMetadata[] domains)
 {
   private string Namespace { get; } = ns;
   private IEnumerable<string> DomainClassNames { get; } = domains.Select(x => x.DomainClassName);
