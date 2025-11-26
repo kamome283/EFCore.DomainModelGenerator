@@ -79,6 +79,9 @@ public class DomainModelGenerator : IIncrementalGenerator
           CanBeReferencedByName: true,
         } prop) return null;
 
+    if (prop.Type is not INamedTypeSymbol { IsGenericType: true, ConstructedFrom.Name: "DbSet" } propType)
+      throw new InvalidOperationException("The type of domain set is not as expected");
+
     var attr = prop.GetAttributes().FirstOrDefault(x =>
     {
       var name = x
@@ -100,9 +103,18 @@ public class DomainModelGenerator : IIncrementalGenerator
       .Value as string;
     mappedName ??= prop.Name;
 
-    var isPrivate = attr
+    var elementType =
+      propType.TypeArguments.SingleOrDefault() ??
+      throw new InvalidOperationException("The count of type arguments of DbSet is not as expected");
+
+    var asDbSet = attr
       .ConstructorArguments
       .ElementAtOrDefault(2)
+      .Value is true;
+
+    var isPrivate = attr
+      .ConstructorArguments
+      .ElementAtOrDefault(3)
       .Value is true;
 
     return new DomainSetMetadata
@@ -110,7 +122,8 @@ public class DomainModelGenerator : IIncrementalGenerator
       DomainName = domainName,
       OriginalName = prop.Name,
       MappedName = mappedName,
-      ElementType = prop.Type,
+      ElementType = elementType,
+      AsDbSet = asDbSet,
       IsPrivate = isPrivate,
     };
   }

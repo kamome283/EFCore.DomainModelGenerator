@@ -30,7 +30,9 @@ internal class DomainModelSource(string ns, INamedTypeSymbol contextType, Domain
   private static string GeneratePropertyCode(DomainSetMetadata x)
   {
     var accessibility = x.IsPrivate ? "private" : "public";
-    var type = x.ElementType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+    var collectionType = x.AsDbSet ? "global::Microsoft.EntityFrameworkCore.DbSet" : "global::System.Linq.IQueryable";
+    var elementType = x.ElementType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+    var type = $"{collectionType}<{elementType}>";
     return
       $"{accessibility} {type} {x.MappedName} => db.{x.OriginalName};";
   }
