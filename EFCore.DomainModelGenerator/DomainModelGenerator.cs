@@ -64,6 +64,10 @@ public class DomainModelGenerator : IIncrementalGenerator
       var domainModelSource = new DomainModelSource(ns, typeSymbol, domain);
       context.AddSource($"{domain.DomainClassName}.g.cs", domainModelSource.GenerateCode());
     }
+
+    // Emission of domain registration helper
+    var domainRegistrationSource = new DomainRegistrationSource(ns, domains);
+    context.AddSource("DomainRegistrationHelper.g.cs", domainRegistrationSource.GenerateCode());
   }
 
   private static DomainSetMetadata? GetDomainSetMetadata(ISymbol symbol)
