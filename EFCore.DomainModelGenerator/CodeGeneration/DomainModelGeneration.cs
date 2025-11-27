@@ -7,7 +7,6 @@ internal class DomainModelGeneration(string ns, INamedTypeSymbol contextType, Do
 {
   private string Namespace { get; } = ns;
   private INamedTypeSymbol ContextType { get; } = contextType;
-  private string DomainClassName { get; } = domain.DomainClassName;
   private IEnumerable<DomainSetMetadata> DomainSetMetadata { get; } = domain.DomainSetMetadata;
 
   public string GenerateCode()
@@ -21,14 +20,14 @@ internal class DomainModelGeneration(string ns, INamedTypeSymbol contextType, Do
 
         namespace {{Namespace}};
 
-        public partial class {{DomainClassName}}({{contextType}} db)
+        public partial class {{domain.ReadonlyDomainClass}}({{contextType}} db)
         {
         protected {{contextType}} Db => db;
 
         {{readonlyPropsCode}}
         }
 
-        public partial class Writable{{DomainClassName}}({{contextType}} db) : {{DomainClassName}}(db)
+        public partial class {{domain.WritableDomainClass}}({{contextType}} db) : {{domain.ReadonlyDomainClass}}(db)
         {
         {{writablePropsCode}}
         }

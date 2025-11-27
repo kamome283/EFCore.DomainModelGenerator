@@ -55,7 +55,7 @@ public class Generator : IIncrementalGenerator
       .GroupBy(x => x.DomainName)
       .Select(g => new DomainMetadata()
       {
-        DomainClassName = $"{g.Key}Domain",
+        DomainName = $"{g.Key}",
         DomainSetMetadata = g,
       })
       .ToArray();
@@ -64,7 +64,7 @@ public class Generator : IIncrementalGenerator
     foreach (var domain in domains)
     {
       var domainModelSource = new DomainModelGeneration(ns, typeSymbol, domain);
-      context.AddSource($"{domain.DomainClassName}.g.cs", domainModelSource.GenerateCode());
+      context.AddSource($"{domain.DomainName}Domain.g.cs", domainModelSource.GenerateCode());
     }
 
     // Emission of domain registration helper
