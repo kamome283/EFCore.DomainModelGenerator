@@ -5,7 +5,6 @@ namespace EFCore.DomainModelGenerator.CodeGeneration;
 internal class DomainRegistratorGeneration(string ns, DomainMetadata[] domains)
 {
   private string Namespace { get; } = ns;
-  private IEnumerable<string> DomainClassNames { get; } = domains.Select(x => x.DomainName);
 
   public string GenerateCode()
   {
@@ -29,7 +28,7 @@ internal class DomainRegistratorGeneration(string ns, DomainMetadata[] domains)
 
   private string GenerateRegistrationCode()
   {
-    var codes = DomainClassNames.Select(GenerateSingleRegistrationCode);
+    var codes = domains.Select(GenerateSingleRegistrationCode);
     var sb = new StringBuilder();
     foreach (var code in codes)
     {
@@ -39,8 +38,8 @@ internal class DomainRegistratorGeneration(string ns, DomainMetadata[] domains)
     return sb.ToString();
   }
 
-  private static string GenerateSingleRegistrationCode(string domainClassName)
+  private static string GenerateSingleRegistrationCode(DomainMetadata domain)
   {
-    return $"services.AddScoped<{domainClassName}>();";
+    return $"services.AddScoped<{domain.ReadonlyDomainClass}>().AddScoped<{domain.WritableDomainClass}>();";
   }
 }
