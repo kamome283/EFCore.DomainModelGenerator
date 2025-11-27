@@ -11,12 +11,11 @@ internal static class DomainSetAttributeSource
     using System;
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    internal sealed class DomainSetAttribute(string domainName = null, string mappedName = null, bool asDbSet = false, bool isPrivate = false) : Attribute
+    internal sealed class DomainSetAttribute(string domainName = null, string mappedName = null, bool hidden = false) : Attribute
     {
       public string DomainName { get; } = domainName;
       public string MappedName { get; } = mappedName;
-      public bool AsDbSet { get; } = asDbSet;
-      public bool IsPrivate { get; } = isPrivate;
+      public bool Hidden { get; } = hidden;
     }
     """;
 }

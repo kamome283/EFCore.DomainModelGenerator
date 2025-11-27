@@ -4,8 +4,11 @@ namespace EFCore.DomainModelGenerator;
 
 internal record DomainMetadata
 {
-  public string DomainClassName { get; set; } = null!;
+  public string DomainName { get; set; } = null!;
   public IEnumerable<DomainSetMetadata> DomainSetMetadata { get; set; } = null!;
+
+  public string ReadonlyDomainClass => $"{DomainName}Domain";
+  public string WritableDomainClass => $"Writable{DomainName}Domain";
 }
 
 internal record DomainSetMetadata
@@ -14,6 +17,5 @@ internal record DomainSetMetadata
   public string MappedName { get; set; } = null!;
   public string OriginalName { get; set; } = null!;
   public ITypeSymbol ElementType { get; set; } = null!;
-  public bool AsDbSet { get; set; }
-  public bool IsPrivate { get; set; }
+  public bool Hidden { get; set; }
 }

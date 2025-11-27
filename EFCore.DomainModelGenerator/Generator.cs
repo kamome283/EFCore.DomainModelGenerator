@@ -55,7 +55,7 @@ public class Generator : IIncrementalGenerator
       .GroupBy(x => x.DomainName)
       .Select(g => new DomainMetadata()
       {
-        DomainClassName = $"{g.Key}Domain",
+        DomainName = $"{g.Key}",
         DomainSetMetadata = g,
       })
       .ToArray();
@@ -64,7 +64,7 @@ public class Generator : IIncrementalGenerator
     foreach (var domain in domains)
     {
       var domainModelSource = new DomainModelGeneration(ns, typeSymbol, domain);
-      context.AddSource($"{domain.DomainClassName}.g.cs", domainModelSource.GenerateCode());
+      context.AddSource($"{domain.DomainName}Domain.g.cs", domainModelSource.GenerateCode());
     }
 
     // Emission of domain registration helper
@@ -109,14 +109,9 @@ public class Generator : IIncrementalGenerator
       propType.TypeArguments.SingleOrDefault() ??
       throw new InvalidOperationException("The count of type arguments of DbSet is not as expected");
 
-    var asDbSet = attr
+    var hidden = attr
       .ConstructorArguments
       .ElementAtOrDefault(2)
-      .Value is true;
-
-    var isPrivate = attr
-      .ConstructorArguments
-      .ElementAtOrDefault(3)
       .Value is true;
 
     return new DomainSetMetadata
@@ -125,8 +120,7 @@ public class Generator : IIncrementalGenerator
       OriginalName = prop.Name,
       MappedName = mappedName,
       ElementType = elementType,
-      AsDbSet = asDbSet,
-      IsPrivate = isPrivate,
+      Hidden = hidden,
     };
   }
 }
