@@ -13,7 +13,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild> <!-- Generates a package at build -->
 
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <Authors>kamome283</Authors>
     <Description>Source generator for automatic domain model creation from your EFCore
       context
