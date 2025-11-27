@@ -9,7 +9,7 @@ public class PrimaryDb(DbContextOptions<PrimaryDb> options) : DbContext(options)
 {
   [DomainSet] internal DbSet<Staff> Staffs { get; init; }
   [DomainSet(nameof(Staffs), "Schedules")] internal DbSet<StaffSchedule> StaffSchedules { get; init; }
-  [DomainSet(nameof(Staffs), isPrivate: true)] internal DbSet<StaffDetails> StaffDetails { get; init; }
+  [DomainSet(nameof(Staffs), hidden: true)] internal DbSet<StaffDetails> StaffDetails { get; init; }
 
   [DomainSet] internal DbSet<Customer> Customers { get; init; }
 }

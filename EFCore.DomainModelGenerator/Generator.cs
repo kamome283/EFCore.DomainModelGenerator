@@ -109,14 +109,9 @@ public class Generator : IIncrementalGenerator
       propType.TypeArguments.SingleOrDefault() ??
       throw new InvalidOperationException("The count of type arguments of DbSet is not as expected");
 
-    var asDbSet = attr
+    var hidden = attr
       .ConstructorArguments
       .ElementAtOrDefault(2)
-      .Value is true;
-
-    var isPrivate = attr
-      .ConstructorArguments
-      .ElementAtOrDefault(3)
       .Value is true;
 
     return new DomainSetMetadata
@@ -125,8 +120,7 @@ public class Generator : IIncrementalGenerator
       OriginalName = prop.Name,
       MappedName = mappedName,
       ElementType = elementType,
-      AsDbSet = asDbSet,
-      IsPrivate = isPrivate,
+      Hidden = hidden,
     };
   }
 }

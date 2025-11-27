@@ -14,6 +14,5 @@ internal record DomainSetMetadata
   public string MappedName { get; set; } = null!;
   public string OriginalName { get; set; } = null!;
   public ITypeSymbol ElementType { get; set; } = null!;
-  public bool AsDbSet { get; set; }
-  public bool IsPrivate { get; set; }
+  public bool Hidden { get; set; }
 }
