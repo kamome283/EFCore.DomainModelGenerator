@@ -14,7 +14,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild> <!-- Generates a package at build -->
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking> <!-- Suppress NU5128 warning-->
 
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
     <Authors>kamome283</Authors>
     <Description>Source generator for automatic domain model creation from your EFCore
       context
