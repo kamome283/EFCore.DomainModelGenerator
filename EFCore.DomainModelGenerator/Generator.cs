@@ -106,14 +106,25 @@ public class Generator : IIncrementalGenerator
       .Value as string;
     mappedName ??= prop.Name;
 
+    var readonlyAccessibilityEnumValue = attr
+      .ConstructorArguments
+      .ElementAtOrDefault(2)
+      .Value as int?;
+    if (readonlyAccessibilityEnumValue is null)
+      throw new InvalidOperationException("failed to get readonlyAccessibility parameter properly");
+    var readonlyAccessibility = GetAccessibilityExpr(readonlyAccessibilityEnumValue.Value);
+
+    var writableAccessibilityEnumValue = attr
+      .ConstructorArguments
+      .ElementAtOrDefault(3)
+      .Value as int?;
+    if (writableAccessibilityEnumValue is null)
+      throw new InvalidOperationException("failed to get writableAccessibility parameter properly");
+    var writableAccessibility = GetAccessibilityExpr(writableAccessibilityEnumValue.Value);
+
     var elementType =
       propType.TypeArguments.SingleOrDefault() ??
       throw new InvalidOperationException("The count of type arguments of DbSet is not as expected");
-
-    var hidden = attr
-      .ConstructorArguments
-      .ElementAtOrDefault(2)
-      .Value is true;
 
     return new DomainSetMetadata
     {
@@ -121,7 +132,19 @@ public class Generator : IIncrementalGenerator
       OriginalName = prop.Name,
       MappedName = mappedName,
       ElementType = elementType,
-      Hidden = hidden,
+      ReadonlyAccessibility = readonlyAccessibility,
+      WritableAccessibility = writableAccessibility,
+    };
+  }
+
+  private static string GetAccessibilityExpr(int accessibilityEnumValue)
+  {
+    return accessibilityEnumValue switch
+    {
+      0 => "public",
+      1 => "internal",
+      2 => "protected",
+      _ => throw new ArgumentOutOfRangeException(nameof(accessibilityEnumValue), accessibilityEnumValue, null),
     };
   }
 }
