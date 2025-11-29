@@ -1,5 +1,6 @@
 using EFCore.DomainModelGenerator.CodeGeneration;
 using EFCore.DomainModelGenerator.ConstantSource;
+using EFCore.DomainModelGenerator.GenerationStep;
 using Microsoft.CodeAnalysis;
 
 namespace EFCore.DomainModelGenerator;
@@ -18,10 +19,15 @@ public class Generator : IIncrementalGenerator
       ctx.AddSource("Access.g.cs", AccessEnumSource.Source);
       ctx.AddSource("DomainModelDependsOnAttribute.g.cs", DomainModelDependsOnAttributeSource.Source);
     });
+    var markedModelSource = context.SyntaxProvider.ForAttributeWithMetadataName(
+      $"{GeneratorNamespace}.{CollectMarkedModelMetadata.TargetAttribute}",
+      static (_, _) => true,
+      static (context, _) => context);
     var source = context.SyntaxProvider.ForAttributeWithMetadataName(
       $"{GeneratorNamespace}.DomainContextAttribute",
       static (_, _) => true,
       static (context, _) => context);
+    var markedModelMetadatum = markedModelSource.Select(CollectMarkedModelMetadata.Collect);
     context.RegisterSourceOutput(source, Emit);
   }
 
