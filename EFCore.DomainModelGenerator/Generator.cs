@@ -54,7 +54,7 @@ public class Generator : IIncrementalGenerator
 
     var domains = domainSets
       .GroupBy(x => x.DomainName)
-      .Select(g => new DomainMetadata()
+      .Select(g => new DomainMetadata
       {
         DomainName = $"{g.Key}",
         DomainSetMetadata = g,
@@ -94,6 +94,10 @@ public class Generator : IIncrementalGenerator
     });
     if (attr is null) return null;
 
+    var elementType =
+      propType.TypeArguments.SingleOrDefault() ??
+      throw new InvalidOperationException("The count of type arguments of DbSet is not as expected");
+
     var domainName = attr
       .ConstructorArguments
       .ElementAtOrDefault(0)
@@ -121,10 +125,6 @@ public class Generator : IIncrementalGenerator
     if (writableAccessibilityEnumValue is null)
       throw new InvalidOperationException("failed to get writableAccessibility parameter properly");
     var writableAccessibility = GetAccessibilityExpr(writableAccessibilityEnumValue.Value);
-
-    var elementType =
-      propType.TypeArguments.SingleOrDefault() ??
-      throw new InvalidOperationException("The count of type arguments of DbSet is not as expected");
 
     return new DomainSetMetadata
     {
