@@ -11,11 +11,16 @@ internal static class DomainSetAttributeSource
     using System;
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    internal sealed class DomainSetAttribute(string domainName = null, string mappedName = null, bool hidden = false) : Attribute
+    internal sealed class DomainSetAttribute(
+      string domainName = null,
+      string mappedName = null,
+      Access readonlyDomain = Access.Public,
+      Access writableDomain = Access.Public) : Attribute
     {
       public string DomainName { get; } = domainName;
       public string MappedName { get; } = mappedName;
-      public bool Hidden { get; } = hidden;
+      public Access ReadonlyDomain { get; } = readonlyDomain;
+      public Access WritableDomain { get; } = writableDomain;
     }
     """;
 }
