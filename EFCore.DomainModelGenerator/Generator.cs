@@ -15,6 +15,7 @@ public class Generator : IIncrementalGenerator
     {
       ctx.AddSource("DomainContextAttribute.g.cs", DomainContextAttributeSource.Source);
       ctx.AddSource("DomainSetAttribute.g.cs", DomainSetAttributeSource.Source);
+      ctx.AddSource("Access.g.cs", AccessEnumSource.Source);
     });
     var source = context.SyntaxProvider.ForAttributeWithMetadataName(
       $"{GeneratorNamespace}.DomainContextAttribute",
@@ -53,7 +54,7 @@ public class Generator : IIncrementalGenerator
 
     var domains = domainSets
       .GroupBy(x => x.DomainName)
-      .Select(g => new DomainMetadata()
+      .Select(g => new DomainMetadata
       {
         DomainName = $"{g.Key}",
         DomainSetMetadata = g,
@@ -93,6 +94,10 @@ public class Generator : IIncrementalGenerator
     });
     if (attr is null) return null;
 
+    var elementType =
+      propType.TypeArguments.SingleOrDefault() ??
+      throw new InvalidOperationException("The count of type arguments of DbSet is not as expected");
+
     var domainName = attr
       .ConstructorArguments
       .ElementAtOrDefault(0)
@@ -105,14 +110,21 @@ public class Generator : IIncrementalGenerator
       .Value as string;
     mappedName ??= prop.Name;
 
-    var elementType =
-      propType.TypeArguments.SingleOrDefault() ??
-      throw new InvalidOperationException("The count of type arguments of DbSet is not as expected");
-
-    var hidden = attr
+    var readonlyAccessibilityEnumValue = attr
       .ConstructorArguments
       .ElementAtOrDefault(2)
-      .Value is true;
+      .Value as int?;
+    if (readonlyAccessibilityEnumValue is null)
+      throw new InvalidOperationException("failed to get readonlyAccessibility parameter properly");
+    var readonlyAccessibility = GetAccessibilityExpr(readonlyAccessibilityEnumValue.Value);
+
+    var writableAccessibilityEnumValue = attr
+      .ConstructorArguments
+      .ElementAtOrDefault(3)
+      .Value as int?;
+    if (writableAccessibilityEnumValue is null)
+      throw new InvalidOperationException("failed to get writableAccessibility parameter properly");
+    var writableAccessibility = GetAccessibilityExpr(writableAccessibilityEnumValue.Value);
 
     return new DomainSetMetadata
     {
@@ -120,7 +132,19 @@ public class Generator : IIncrementalGenerator
       OriginalName = prop.Name,
       MappedName = mappedName,
       ElementType = elementType,
-      Hidden = hidden,
+      ReadonlyAccessibility = readonlyAccessibility,
+      WritableAccessibility = writableAccessibility,
+    };
+  }
+
+  private static string GetAccessibilityExpr(int accessibilityEnumValue)
+  {
+    return accessibilityEnumValue switch
+    {
+      0 => "public",
+      1 => "internal",
+      2 => "protected",
+      _ => throw new ArgumentOutOfRangeException(nameof(accessibilityEnumValue), accessibilityEnumValue, null),
     };
   }
 }

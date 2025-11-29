@@ -17,5 +17,6 @@ internal record DomainSetMetadata
   public string MappedName { get; set; } = null!;
   public string OriginalName { get; set; } = null!;
   public ITypeSymbol ElementType { get; set; } = null!;
-  public bool Hidden { get; set; }
+  public string ReadonlyAccessibility { get; set; } = null!;
+  public string WritableAccessibility { get; set; } = null!;
 }

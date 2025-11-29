@@ -32,7 +32,7 @@ internal class DomainModelGeneration(string ns, INamedTypeSymbol contextType, Do
 
   private static string GeneratePropertyCode(DomainSetMetadata x, bool writable)
   {
-    var accessibility = x.Hidden ? "protected" : "public";
+    var accessibility = writable ? x.WritableAccessibility : x.ReadonlyAccessibility;
     var newKeyword = writable ? "new" : "";
     var collectionType = writable ? "global::Microsoft.EntityFrameworkCore.DbSet" : "global::System.Linq.IQueryable";
     var elementType = x.ElementType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
