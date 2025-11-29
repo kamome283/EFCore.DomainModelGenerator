@@ -16,6 +16,7 @@ public class Generator : IIncrementalGenerator
       ctx.AddSource("DomainContextAttribute.g.cs", DomainContextAttributeSource.Source);
       ctx.AddSource("DomainSetAttribute.g.cs", DomainSetAttributeSource.Source);
       ctx.AddSource("Access.g.cs", AccessEnumSource.Source);
+      ctx.AddSource("DomainModelDependsOnAttribute.g.cs", DomainModelDependsOnAttributeSource.Source);
     });
     var source = context.SyntaxProvider.ForAttributeWithMetadataName(
       $"{GeneratorNamespace}.DomainContextAttribute",
