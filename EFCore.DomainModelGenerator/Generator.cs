@@ -33,9 +33,19 @@ public class Generator : IIncrementalGenerator
       static (_, _) => true,
       static (context, _) => context);
 
-    var markedModelMetadatum = markedModelSource.Select(CollectMarkedModelMetadata.Collect);
-    var setMetadatum = setSource.Select(CollectSetMetadata.Collect);
-    var contextMetadatum = contextSource.Select(CollectContextMetadata.Collect);
+    var markedModelMetadatum = markedModelSource.Select(CollectMarkedModelMetadata.Collect).Collect();
+    var setMetadatum = setSource.Select(CollectSetMetadata.Collect).Collect();
+    var contextMetadatum = contextSource.Select(CollectContextMetadata.Collect).Collect();
+
+    var groups = contextMetadatum
+      .Combine(setMetadatum)
+      .Combine(markedModelMetadatum)
+      .Select(static (tuple, token) =>
+      {
+        var (pair, models) = tuple;
+        var (contexts, sets) = pair;
+        return CombineMetadata.Combine(contexts, models, sets, token);
+      });
 
     context.RegisterSourceOutput(contextSource, Emit);
   }
