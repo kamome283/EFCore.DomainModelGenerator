@@ -14,14 +14,9 @@ internal static class Common
 
   extension(AttributeData attribute)
   {
-    public T? GetArgumentAt<T>(int index) where T : class
+    public object? GetArgumentAt(int index)
     {
-      return attribute.ConstructorArguments.ElementAtOrDefault(index) as T;
-    }
-
-    public object GetArgumentAt(int index)
-    {
-      return attribute.ConstructorArguments.ElementAtOrDefault(index);
+      return attribute.ConstructorArguments.ElementAtOrDefault(index).Value;
     }
   }
 }

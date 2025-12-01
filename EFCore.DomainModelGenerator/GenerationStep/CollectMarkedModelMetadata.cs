@@ -20,9 +20,9 @@ internal static class CollectMarkedModelMetadata
 
   private static (string DependsOn, string MappedName) GetDependency(AttributeData dependencyAttribute)
   {
-    var dependsOn = dependencyAttribute.GetArgumentAt<Type>(0)
+    var dependsOn = dependencyAttribute.GetArgumentAt(0) as Type
                     ?? throw new CollectMarkedModelMetadataException("dependsOn");
-    var mappedName = dependencyAttribute.GetArgumentAt<string>(1);
+    var mappedName = dependencyAttribute.GetArgumentAt(1) as string;
     mappedName ??= dependsOn.Name;
     return (dependsOn.FullName, mappedName);
   }

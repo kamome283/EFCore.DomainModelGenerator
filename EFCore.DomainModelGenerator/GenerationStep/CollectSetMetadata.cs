@@ -20,8 +20,8 @@ internal static class CollectSetMetadata
     {
       ParentType = symbol.ContainingType as ITypeSymbol ??
                    throw new CollectSetMetadataException("ParentType"),
-      DomainName = attr.GetArgumentAt<string>(0) ?? symbol.Name,
-      MappedName = attr.GetArgumentAt<string>(1) ?? symbol.Name,
+      DomainName = attr.GetArgumentAt(0) as string ?? symbol.Name,
+      MappedName = attr.GetArgumentAt(1) as string ?? symbol.Name,
       OriginalName = symbol.Name,
       ElementType = propType.TypeArguments.Single(),
       ReadonlyAccessibility = GetAccessibility(attr.GetArgumentAt(2) as int?)
