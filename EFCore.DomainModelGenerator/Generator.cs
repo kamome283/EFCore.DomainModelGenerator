@@ -21,7 +21,7 @@ public class Generator : IIncrementalGenerator
     });
 
     var markedModelSource = context.SyntaxProvider.ForAttributeWithMetadataName(
-      $"{GeneratorNamespace}.{CollectMarkedModelMetadata.TargetAttribute}",
+      $"{GeneratorNamespace}.{CollectModelMetadata.TargetAttribute}",
       static (_, _) => true,
       static (context, _) => context);
     var setSource = context.SyntaxProvider.ForAttributeWithMetadataName(
@@ -33,7 +33,7 @@ public class Generator : IIncrementalGenerator
       static (_, _) => true,
       static (context, _) => context);
 
-    var markedModelMetadatum = markedModelSource.Select(CollectMarkedModelMetadata.Collect).Collect();
+    var markedModelMetadatum = markedModelSource.Select(CollectModelMetadata.Collect).Collect();
     var setMetadatum = setSource.Select(CollectSetMetadata.Collect).Collect();
     var contextMetadatum = contextSource.Select(CollectContextMetadata.Collect).Collect();
 

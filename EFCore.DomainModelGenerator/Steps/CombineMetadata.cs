@@ -4,7 +4,7 @@ internal static class CombineMetadata
 {
   public static IEnumerable<MetadataGroup> Combine(
     IEnumerable<ContextMetadata> contexts,
-    IEnumerable<MarkedModelMetadata> models,
+    IEnumerable<ModelMetadata> models,
     IEnumerable<SetMetadata> sets,
     CancellationToken _)
   {
@@ -16,13 +16,13 @@ internal static class CombineMetadata
 internal record MetadataGroup
 {
   public IEnumerable<ContextMetadata> Contexts { get; set; } = [];
-  public MarkedModelMetadata Model { get; set; } = null!;
+  public ModelMetadata Model { get; set; } = null!;
   public IEnumerable<SetMetadata> Sets { get; set; } = [];
 }
 
 file class Impl(
   IEnumerable<ContextMetadata> contexts,
-  IEnumerable<MarkedModelMetadata> markedModels,
+  IEnumerable<ModelMetadata> markedModels,
   IEnumerable<SetMetadata> sets)
 {
   private readonly Dictionary<string, ContextMetadata> _contexts =
@@ -61,7 +61,7 @@ file class Impl(
   {
     var modelName = set.ModelName;
     if (_pairs.TryGetValue(modelName, out var foundPair)) return foundPair;
-    var model = new MarkedModelMetadata { ModelName = modelName };
+    var model = new ModelMetadata { ModelName = modelName };
     var pair = new Group { Model = model };
     _pairs[modelName] = pair;
     return pair;
@@ -71,7 +71,7 @@ file class Impl(
 file record Group
 {
   public List<ContextMetadata> Contexts { get; } = [];
-  public MarkedModelMetadata Model { get; set; } = null!;
+  public ModelMetadata Model { get; set; } = null!;
   public List<SetMetadata> Sets { get; } = [];
   public string ModelName => Model.ModelName;
 

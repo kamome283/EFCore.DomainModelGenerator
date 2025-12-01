@@ -4,18 +4,18 @@ namespace EFCore.DomainModelGenerator.Steps;
 
 using static Common;
 
-internal static class CollectMarkedModelMetadata
+internal static class CollectModelMetadata
 {
   public const string TargetAttribute = "DomainModelDependsOn";
 
-  public static MarkedModelMetadata Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
+  public static ModelMetadata Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
     var symbol = source.TargetSymbol as INamedTypeSymbol ?? throw new CollectMarkedModelMetadataException("symbol");
     var modelName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
     var dependencies = symbol
       .GetAttributesOf($"{GeneratorNamespace}.{TargetAttribute}")
       .Select(GetDependency);
-    return new MarkedModelMetadata { ModelName = modelName, Dependencies = dependencies };
+    return new ModelMetadata { ModelName = modelName, Dependencies = dependencies };
   }
 
   private static (string DependsOn, string MappedName) GetDependency(AttributeData dependencyAttribute)
@@ -28,7 +28,7 @@ internal static class CollectMarkedModelMetadata
   }
 }
 
-internal record MarkedModelMetadata
+internal record ModelMetadata
 {
   public string ModelName { get; set; } = null!;
   public IEnumerable<(string DependsOn, string MappedName)> Dependencies { get; set; } = [];

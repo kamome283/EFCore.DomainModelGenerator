@@ -18,7 +18,7 @@ internal static class ModelEmission
 file class CodeGenerationImpl(MetadataGroup group)
 {
   private readonly ContextMetadata _context = group.Contexts.First();
-  private readonly MarkedModelMetadata _model = group.Model;
+  private readonly ModelMetadata _model = group.Model;
   private readonly IEnumerable<SetMetadata> _sets = group.Sets;
 
   public string FileName => $"{_model.ModelName}.g.cs";
