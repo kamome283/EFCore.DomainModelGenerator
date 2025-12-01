@@ -1,4 +1,4 @@
-using EFCore.DomainModelGenerator.GenerationStep;
+using EFCore.DomainModelGenerator.Steps;
 using Microsoft.CodeAnalysis;
 
 namespace EFCore.DomainModelGenerator.Emissions;

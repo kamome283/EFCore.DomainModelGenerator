@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace EFCore.DomainModelGenerator.GenerationStep;
+namespace EFCore.DomainModelGenerator.Steps;
 
 using static Common;
 

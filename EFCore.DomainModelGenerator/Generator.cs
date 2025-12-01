@@ -1,6 +1,6 @@
 using EFCore.DomainModelGenerator.ConstantSource;
 using EFCore.DomainModelGenerator.Emissions;
-using EFCore.DomainModelGenerator.GenerationStep;
+using EFCore.DomainModelGenerator.Steps;
 using Microsoft.CodeAnalysis;
 
 namespace EFCore.DomainModelGenerator;

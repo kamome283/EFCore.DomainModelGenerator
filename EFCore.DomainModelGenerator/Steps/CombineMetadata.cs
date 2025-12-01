@@ -1,4 +1,4 @@
-namespace EFCore.DomainModelGenerator.GenerationStep;
+namespace EFCore.DomainModelGenerator.Steps;
 
 internal static class CombineMetadata
 {
