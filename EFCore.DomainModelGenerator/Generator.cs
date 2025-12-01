@@ -50,6 +50,7 @@ public class Generator : IIncrementalGenerator
 
     // context.RegisterSourceOutput(contextSource, Emit);
     context.RegisterSourceOutput(groups, ModelEmission.Emit);
+    context.RegisterSourceOutput(groups, RegistratorEmission.Emit);
   }
 
   private static void Emit(SourceProductionContext context, GeneratorAttributeSyntaxContext source)
