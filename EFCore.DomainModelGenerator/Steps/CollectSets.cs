@@ -4,30 +4,30 @@ namespace EFCore.DomainModelGenerator.Steps;
 
 using static Common;
 
-internal static class CollectSetMetadata
+internal static class CollectSets
 {
   public const string TargetAttribute = "DomainSetAttribute";
 
   public static SetMetadata Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
-    var symbol = source.TargetSymbol as IPropertySymbol ?? throw new CollectSetMetadataException("symbol");
+    var symbol = source.TargetSymbol as IPropertySymbol ?? throw new CollectSetsException("symbol");
     var propType = symbol.Type as INamedTypeSymbol;
     if (propType is null or not { IsGenericType: true, ConstructedFrom.Name: "DbSet" })
-      throw new CollectSetMetadataException("propType");
+      throw new CollectSetsException("propType");
     var attr = symbol.GetAttributesOf($"{GeneratorNamespace}.{TargetAttribute}").SingleOrDefault()
-               ?? throw new CollectSetMetadataException("attr");
+               ?? throw new CollectSetsException("attr");
     return new SetMetadata
     {
       ParentType = symbol.ContainingType as ITypeSymbol ??
-                   throw new CollectSetMetadataException("ParentType"),
+                   throw new CollectSetsException("ParentType"),
       DomainName = attr.GetArgumentAt(0) as string ?? symbol.Name,
       MappedName = attr.GetArgumentAt(1) as string ?? symbol.Name,
       OriginalName = symbol.Name,
       ElementType = propType.TypeArguments.Single(),
       ReadonlyAccessibility = GetAccessibility(attr.GetArgumentAt(2) as int?)
-                              ?? throw new CollectSetMetadataException("ReadonlyAccessibility"),
+                              ?? throw new CollectSetsException("ReadonlyAccessibility"),
       WritableAccessibility = GetAccessibility(attr.GetArgumentAt(3) as int?)
-                              ?? throw new CollectSetMetadataException("WritableAccessibility"),
+                              ?? throw new CollectSetsException("WritableAccessibility"),
     };
   }
 
@@ -38,7 +38,7 @@ internal static class CollectSetMetadata
       0 => "public",
       1 => "internal",
       2 => "protected",
-      _ => throw new CollectSetMetadataException("accessibility"),
+      _ => throw new CollectSetsException("accessibility"),
     };
   }
 }
@@ -56,4 +56,4 @@ internal record SetMetadata
   public string ModelName => $"{DomainName}Domain";
 }
 
-file class CollectSetMetadataException(string segment) : Exception(segment);
+file class CollectSetsException(string segment) : Exception(segment);

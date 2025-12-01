@@ -21,21 +21,21 @@ public class Generator : IIncrementalGenerator
     });
 
     var markedModelSource = context.SyntaxProvider.ForAttributeWithMetadataName(
-      $"{GeneratorNamespace}.{CollectModelMetadata.TargetAttribute}",
+      $"{GeneratorNamespace}.{CollectModels.TargetAttribute}",
       static (_, _) => true,
       static (context, _) => context);
     var setSource = context.SyntaxProvider.ForAttributeWithMetadataName(
-      $"{GeneratorNamespace}.{CollectSetMetadata.TargetAttribute}",
+      $"{GeneratorNamespace}.{CollectSets.TargetAttribute}",
       static (_, _) => true,
       static (context, _) => context);
     var contextSource = context.SyntaxProvider.ForAttributeWithMetadataName(
-      $"{GeneratorNamespace}.{CollectContextMetadata.TargetAttribute}",
+      $"{GeneratorNamespace}.{CollectContexts.TargetAttribute}",
       static (_, _) => true,
       static (context, _) => context);
 
-    var markedModelMetadatum = markedModelSource.Select(CollectModelMetadata.Collect).Collect();
-    var setMetadatum = setSource.Select(CollectSetMetadata.Collect).Collect();
-    var contextMetadatum = contextSource.Select(CollectContextMetadata.Collect).Collect();
+    var markedModelMetadatum = markedModelSource.Select(CollectModels.Collect).Collect();
+    var setMetadatum = setSource.Select(CollectSets.Collect).Collect();
+    var contextMetadatum = contextSource.Select(CollectContexts.Collect).Collect();
 
     var groups = contextMetadatum
       .Combine(setMetadatum)
