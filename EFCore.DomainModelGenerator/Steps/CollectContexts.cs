@@ -13,7 +13,6 @@ internal static class CollectContexts
     var symbol = source.TargetSymbol as INamedTypeSymbol ?? throw new CollectContextsException("symbol");
     var attr = symbol.GetAttributesOf($"{GeneratorNamespace}.{TargetAttribute}").SingleOrDefault()
                ?? throw new CollectContextsException("attr");
-    // throw new CollectContextMetadataException(attr.ToString());
     return new ContextMetadata
     {
       Namespace = attr.GetArgumentAt(0) as string ?? throw new CollectContextsException("Namespace"),

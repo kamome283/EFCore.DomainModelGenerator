@@ -12,11 +12,8 @@ internal static class Common
       x.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == attributeName);
   }
 
-  extension(AttributeData attribute)
+  public static object? GetArgumentAt(this AttributeData attribute, int index)
   {
-    public object? GetArgumentAt(int index)
-    {
-      return attribute.ConstructorArguments.ElementAtOrDefault(index).Value;
-    }
+    return attribute.ConstructorArguments.ElementAtOrDefault(index).Value;
   }
 }

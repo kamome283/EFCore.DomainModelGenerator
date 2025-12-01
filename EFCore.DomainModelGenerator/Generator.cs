@@ -20,26 +20,28 @@ public class Generator : IIncrementalGenerator
       ctx.AddSource("DomainModelDependsOnAttribute.g.cs", DomainModelDependsOnAttributeSource.Source);
     });
 
-    var markedModelSource = context.SyntaxProvider.ForAttributeWithMetadataName(
-      $"{GeneratorNamespace}.{CollectModels.TargetAttribute}",
-      static (_, _) => true,
-      static (context, _) => context);
-    var setSource = context.SyntaxProvider.ForAttributeWithMetadataName(
-      $"{GeneratorNamespace}.{CollectSets.TargetAttribute}",
-      static (_, _) => true,
-      static (context, _) => context);
     var contextSource = context.SyntaxProvider.ForAttributeWithMetadataName(
       $"{GeneratorNamespace}.{CollectContexts.TargetAttribute}",
       static (_, _) => true,
       static (context, _) => context);
 
-    var markedModelMetadatum = markedModelSource.Select(CollectModels.Collect).Collect();
-    var setMetadatum = setSource.Select(CollectSets.Collect).Collect();
-    var contextMetadatum = contextSource.Select(CollectContexts.Collect).Collect();
+    var setSource = context.SyntaxProvider.ForAttributeWithMetadataName(
+      $"{GeneratorNamespace}.{CollectSets.TargetAttribute}",
+      static (_, _) => true,
+      static (context, _) => context);
 
-    var groups = contextMetadatum
-      .Combine(setMetadatum)
-      .Combine(markedModelMetadatum)
+    var modelSource = context.SyntaxProvider.ForAttributeWithMetadataName(
+      $"{GeneratorNamespace}.{CollectModels.TargetAttribute}",
+      static (_, _) => true,
+      static (context, _) => context);
+
+    var contexts = contextSource.Select(CollectContexts.Collect).Collect();
+    var sets = setSource.Select(CollectSets.Collect).Collect();
+    var models = modelSource.Select(CollectModels.Collect).Collect();
+
+    var groups = contexts
+      .Combine(sets)
+      .Combine(models)
       .Select(static (tuple, token) =>
       {
         var (pair, models) = tuple;
