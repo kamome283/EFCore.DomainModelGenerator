@@ -1,5 +1,6 @@
 using EFCore.DomainModelGenerator.CodeGeneration;
 using EFCore.DomainModelGenerator.ConstantSource;
+using EFCore.DomainModelGenerator.Emissions;
 using EFCore.DomainModelGenerator.GenerationStep;
 using Microsoft.CodeAnalysis;
 
@@ -47,7 +48,8 @@ public class Generator : IIncrementalGenerator
         return CombineMetadata.Combine(contexts, models, sets, token);
       });
 
-    context.RegisterSourceOutput(contextSource, Emit);
+    // context.RegisterSourceOutput(contextSource, Emit);
+    context.RegisterSourceOutput(groups, ModelEmission.Emit);
   }
 
   private static void Emit(SourceProductionContext context, GeneratorAttributeSyntaxContext source)
