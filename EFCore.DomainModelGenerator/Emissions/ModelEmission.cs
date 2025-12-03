@@ -37,18 +37,34 @@ file class CodeGenerationImpl(MetadataGroup group)
         using global::Microsoft.EntityFrameworkCore;
         using global::System.Linq;
 
-        public partial class {{_model.ModelName}}({{_context.ContextType}} db)
+        public partial class {{_model.ModelName}}(
+        {{_context.ContextType}} db 
+        {{GetDependencyInjectionSnippet()}})
         {
         protected {{_context.ContextType}} Db => db;
 
         {{string.Join("\n", _sets.Select(static set => SinglePropertyLine(set, writable: false)))}}
         }
 
-        public partial class Writable{{_model.ModelName}}({{_context.ContextType}} db) : {{_model.ModelName}}(db)
+        public partial class Writable{{_model.ModelName}}(
+        {{_context.ContextType}} db
+        {{GetDependencyInjectionSnippet()}}) : {{_model.ModelName}}(db {{GetDependencyParameterSnippet()}})
         {
         {{string.Join("\n", _sets.Select(static set => SinglePropertyLine(set, writable: true)))}}
         }
         """;
+  }
+
+  private string GetDependencyInjectionSnippet()
+  {
+    var segments = _model.Dependencies.Select(x => $"{x.DependsOn} {x.MappedName}").ToArray();
+    return segments.Length != 0 ? $", {string.Join(", ", segments)}" : "";
+  }
+
+  private string GetDependencyParameterSnippet()
+  {
+    var segments = _model.Dependencies.Select(x => $"{x.MappedName}").ToArray();
+    return segments.Length != 0 ? $", {string.Join(", ", segments)}" : "";
   }
 
   private static string SinglePropertyLine(SetMetadata set, bool writable)
