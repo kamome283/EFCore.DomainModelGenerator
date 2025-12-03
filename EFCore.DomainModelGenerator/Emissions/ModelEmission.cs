@@ -19,7 +19,9 @@ file class CodeGenerationImpl(MetadataGroup group)
 {
   // TODO: Refactor to support multiple DbContexts.
   // The current logic assumes a single context and will throw an exception if more than one is provided.
-  private readonly ContextMetadata _context = group.Contexts.First();
+  private readonly ContextMetadata _context = group.Contexts.FirstOrDefault()
+                                              ?? throw new ModelEmissionException("_context");
+
   private readonly ModelMetadata _model = group.Model;
   private readonly IEnumerable<SetMetadata> _sets = group.Sets;
 
@@ -58,3 +60,5 @@ file class CodeGenerationImpl(MetadataGroup group)
     return $"{accessibility} {newKeyword} {collectionType}<{elementType}> {set.MappedName} => Db.{set.OriginalName};";
   }
 }
+
+internal class ModelEmissionException(string segment) : InvalidOperationException(segment);

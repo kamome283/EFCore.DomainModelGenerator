@@ -10,8 +10,10 @@ internal static class RegistratorEmission
     var gs = groups.ToArray();
     // TODO: Refactor to support multiple DbContexts.
     // The current logic assumes a single context and will throw an exception if more than one is provided.
-    var firstContextMetadata = gs.FirstOrDefault()?.Contexts.First();
-    if (firstContextMetadata is null) return;
+    var firstGroup = gs.FirstOrDefault();
+    if (firstGroup is null) return;
+    var firstContextMetadata = firstGroup.Contexts.FirstOrDefault()
+                               ?? throw new RegistratorEmissionException("firstContext");
     context.AddSource("DomainRegistration.g.cs", GenerateCode(firstContextMetadata, gs));
   }
 
@@ -41,3 +43,5 @@ internal static class RegistratorEmission
     return $"services.AddScoped<{model.ModelName}>().AddScoped<Writable{model.ModelName}>();";
   }
 }
+
+internal class RegistratorEmissionException(string segment) : InvalidOperationException(segment);
