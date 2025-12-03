@@ -1,8 +1,10 @@
+using EFCore.DomainModelGenerator;
 using Microsoft.EntityFrameworkCore;
 using SampleProgram.Entities;
 
 namespace SampleProgram.Domains;
 
+[DomainModelDependsOn(typeof(CustomersDomain))]
 public partial class StaffsDomain
 {
   // User defined domain logic
