@@ -82,4 +82,4 @@ file record Group
   }
 }
 
-file class CombineMetadataException(string segment) : Exception(segment);
+internal class CombineMetadataException(string segment) : InvalidOperationException(segment);

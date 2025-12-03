@@ -56,4 +56,4 @@ internal record SetMetadata
   public string ModelName => $"{DomainName}Domain";
 }
 
-file class CollectSetsException(string segment) : Exception(segment);
+internal class CollectSetsException(string segment) : InvalidOperationException(segment);

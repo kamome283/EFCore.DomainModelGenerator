@@ -34,4 +34,4 @@ internal record ModelMetadata
   public IEnumerable<(string DependsOn, string MappedName)> Dependencies { get; set; } = [];
 }
 
-file class CollectModelsException(string segment) : Exception(segment);
+internal class CollectModelsException(string segment) : InvalidOperationException(segment);
