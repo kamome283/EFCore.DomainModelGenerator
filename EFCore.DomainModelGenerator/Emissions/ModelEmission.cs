@@ -17,6 +17,8 @@ internal static class ModelEmission
 
 file class CodeGenerationImpl(MetadataGroup group)
 {
+  // TODO: Refactor to support multiple DbContexts.
+  // The current logic assumes a single context and will throw an exception if more than one is provided.
   private readonly ContextMetadata _context = group.Contexts.First();
   private readonly ModelMetadata _model = group.Model;
   private readonly IEnumerable<SetMetadata> _sets = group.Sets;

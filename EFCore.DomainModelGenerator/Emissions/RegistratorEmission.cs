@@ -8,6 +8,8 @@ internal static class RegistratorEmission
   public static void Emit(SourceProductionContext context, IEnumerable<MetadataGroup> groups)
   {
     var gs = groups.ToArray();
+    // TODO: Refactor to support multiple DbContexts.
+    // The current logic assumes a single context and will throw an exception if more than one is provided.
     var firstContextMetadata = gs.FirstOrDefault()?.Contexts.First();
     if (firstContextMetadata is null) return;
     context.AddSource("DomainRegistration.g.cs", GenerateCode(firstContextMetadata, gs));
