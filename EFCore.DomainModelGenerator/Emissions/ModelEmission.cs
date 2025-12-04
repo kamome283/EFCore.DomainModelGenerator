@@ -22,13 +22,11 @@ file static class Impl
 
     public string GenerateCode()
     {
-      // TODO: Refactor to support multiple DbContexts.
-      // The current logic assumes a single context and will throw an exception if more than one is provided.
-      var firstContext = group.Contexts.SingleOrDefault() ?? throw new ModelEmissionException("firstContext");
       var model = group.Model;
       var sets = group.Sets.ToArray();
 
-      var contextParameters = new Parameter[] { new(firstContext.ContextType.ToString(), "Db") };
+      var contextParameters =
+        group.Contexts.Select(static x => new Parameter(x.ContextType.ToString(), x.ContextType.Name));
       var dependencyParameters = model.Dependencies.Select(static x => new Parameter(x.DependsOn, x.MappedName));
       var parameters = contextParameters.Concat(dependencyParameters).ToArray();
 
@@ -61,7 +59,8 @@ file static class Impl
       var newKeyword = writable ? "new" : "";
       var collectionType = writable ? "DbSet" : "IQueryable";
       var elementType = set.ElementType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-      return $"{accessibility} {newKeyword} {collectionType}<{elementType}> {set.MappedName} => Db.{set.OriginalName};";
+      return
+        $"{accessibility} {newKeyword} {collectionType}<{elementType}> {set.MappedName} => {set.ParentType.Name}.{set.OriginalName};";
     }
   }
 }
