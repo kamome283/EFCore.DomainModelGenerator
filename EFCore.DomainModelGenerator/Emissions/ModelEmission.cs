@@ -59,8 +59,11 @@ file static class Impl
       var newKeyword = writable ? "new" : "";
       var collectionType = writable ? "DbSet" : "IQueryable";
       var elementType = set.ElementType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+      var mappedName = set.MappedName;
+      var contextName = set.ParentType.Name;
+      var originalName = set.OriginalName;
       return
-        $"{accessibility} {newKeyword} {collectionType}<{elementType}> {set.MappedName} => {set.ParentType.Name}.{set.OriginalName};";
+        $"{accessibility} {newKeyword} {collectionType}<{elementType}> {mappedName} => {contextName}.{originalName};";
     }
   }
 }
