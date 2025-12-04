@@ -65,6 +65,7 @@ file static class Impl
   }
 }
 
+// ReSharper disable once StructCanBeMadeReadOnly
 file record struct Parameter(string Type, string Name)
 {
   public string MaskedName => $"_{Name}";
@@ -93,5 +94,3 @@ file static class ParameterExprHelper
     }
   }
 }
-
-internal class ModelEmissionException(string segment) : InvalidOperationException(segment);
