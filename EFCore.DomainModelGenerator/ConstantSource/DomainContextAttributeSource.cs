@@ -11,9 +11,6 @@ internal static class DomainContextAttributeSource
     using System;
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    internal sealed class DomainContextAttribute(string domainModelNamespace) : Attribute
-    {
-      public string DomainModelNamespace { get; } = domainModelNamespace;
-    }
+    internal sealed class DomainContextAttribute : Attribute;
     """;
 }
