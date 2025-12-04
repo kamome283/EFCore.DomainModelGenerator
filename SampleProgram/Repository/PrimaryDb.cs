@@ -4,7 +4,7 @@ using SampleProgram.Entities;
 
 namespace SampleProgram.Repository;
 
-[DomainContext("SampleProgram.Domains")]
+[DomainContext]
 public class PrimaryDb(DbContextOptions<PrimaryDb> options) : DbContext(options)
 {
   [DomainSet] internal DbSet<Staff> Staffs { get; init; }
