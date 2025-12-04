@@ -40,14 +40,16 @@ public class Generator : IIncrementalGenerator
     var sets = setSource.Select(CollectSets.Collect).Collect();
     var models = modelSource.Select(CollectModels.Collect).Collect();
 
-    var groups = contexts
+    var groups = config
+      .Combine(contexts)
       .Combine(sets)
       .Combine(models)
-      .Select(static (tuple, token) =>
+      .Select(static (ccsm, token) =>
       {
-        var (pair, models) = tuple;
-        var (contexts, sets) = pair;
-        return CombineMetadata.Combine(contexts, models, sets, token);
+        var (ccs, models) = ccsm;
+        var (cc, sets) = ccs;
+        var (config, contexts) = cc;
+        return CombineMetadata.Combine(config, contexts, models, sets, token);
       });
 
     context.RegisterSourceOutput(groups, ModelEmission.Emit);

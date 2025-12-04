@@ -3,17 +3,19 @@ namespace EFCore.DomainModelGenerator.Steps;
 internal static class CombineMetadata
 {
   public static IEnumerable<MetadataGroup> Combine(
+    GeneratorConfig config,
     IEnumerable<ContextMetadata> contexts,
     IEnumerable<ModelMetadata> models,
     IEnumerable<SetMetadata> sets,
     CancellationToken _)
   {
-    return CombineImpl.Process(contexts, models, sets);
+    return CombineImpl.Process(config, contexts, models, sets);
   }
 }
 
 internal record MetadataGroup
 {
+  public GeneratorConfig Config { get; set; } = null!;
   public IEnumerable<ContextMetadata> Contexts { get; set; } = [];
   public ModelMetadata Model { get; set; } = null!;
   public IEnumerable<SetMetadata> Sets { get; set; } = [];
@@ -22,6 +24,7 @@ internal record MetadataGroup
 file static class CombineImpl
 {
   public static IEnumerable<MetadataGroup> Process(
+    GeneratorConfig config,
     IEnumerable<ContextMetadata> contexts,
     IEnumerable<ModelMetadata> markedModels,
     IEnumerable<SetMetadata> sets)
@@ -48,7 +51,7 @@ file static class CombineImpl
       correspondingGroup.AddContextIfNotExist(correspondingContext);
     }
 
-    return groupMap.Values.Select(x => x.ToContextMetadata());
+    return groupMap.Values.Select(x => x.ToContextMetadata(config));
   }
 
   private record Group
@@ -66,8 +69,9 @@ file static class CombineImpl
       Contexts.Add(context);
     }
 
-    public MetadataGroup ToContextMetadata() => new()
+    public MetadataGroup ToContextMetadata(GeneratorConfig config) => new()
     {
+      Config = config,
       Contexts = Contexts,
       Model = Model,
       Sets = Sets,
