@@ -35,6 +35,7 @@ public class Generator : IIncrementalGenerator
       static (_, _) => true,
       static (context, _) => context);
 
+    var config = context.AnalyzerConfigOptionsProvider.Select(ReadConfig.Read);
     var contexts = contextSource.Select(CollectContexts.Collect).Collect();
     var sets = setSource.Select(CollectSets.Collect).Collect();
     var models = modelSource.Select(CollectModels.Collect).Collect();
