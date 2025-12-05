@@ -36,7 +36,7 @@ internal static class CollectModels
                     ?? throw new CollectModelsException("dependsOn");
     var mappedName = dependencyAttribute.GetArgumentAt(1) as string;
     mappedName ??= dependsOn.Name;
-    return new ModelDependency() { DependsOn = dependsOn, MappedName = mappedName };
+    return new ModelDependency { DependsOn = dependsOn, MappedName = mappedName };
   }
 }
 
