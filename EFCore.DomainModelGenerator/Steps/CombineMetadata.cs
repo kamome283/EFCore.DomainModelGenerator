@@ -33,18 +33,18 @@ file static class CombineImpl
       .ToDictionary(x => x.ContextType.Name);
     var groupMap = markedModels
       .Select(x => new Group { Model = x })
-      .ToDictionary(x => x.ModelName);
+      .ToDictionary(x => x.DomainName);
 
     foreach (var set in sets)
     {
       _ = contextMap.TryGetValue(set.ParentType.Name, out var correspondingContext);
       if (correspondingContext is null) throw new CombineMetadataException("correspondingContext");
 
-      _ = groupMap.TryGetValue(set.ModelName, out var correspondingGroup);
+      _ = groupMap.TryGetValue(set.DomainName, out var correspondingGroup);
       if (correspondingGroup is null)
       {
-        correspondingGroup = new Group { Model = new ModelMetadata { ModelName = set.ModelName } };
-        groupMap[set.ModelName] = correspondingGroup;
+        correspondingGroup = new Group { Model = new ModelMetadata { DomainName = set.DomainName } };
+        groupMap[set.DomainName] = correspondingGroup;
       }
 
       correspondingGroup.AddSet(set);
@@ -59,7 +59,7 @@ file static class CombineImpl
     private List<ContextMetadata> Contexts { get; } = [];
     public ModelMetadata Model { private get; set; } = null!;
     private List<SetMetadata> Sets { get; } = [];
-    public string ModelName => Model.ModelName;
+    public string DomainName => Model.DomainName;
 
     public void AddSet(SetMetadata set) => Sets.Add(set);
 

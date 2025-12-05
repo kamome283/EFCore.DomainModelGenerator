@@ -6,10 +6,10 @@ internal static class Common
 {
   public const string GeneratorNamespace = "global::EFCore.DomainModelGenerator";
 
-  public static IEnumerable<AttributeData> GetAttributesOf(this ISymbol symbol, string attributeName)
+  public static IEnumerable<AttributeData> GetAttributesOf(this ISymbol symbol, string fullyQualifiedName)
   {
     return symbol.GetAttributes().Where(x =>
-      x.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == attributeName);
+      x.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == fullyQualifiedName);
   }
 
   public static object? GetArgumentAt(this AttributeData attribute, int index)
