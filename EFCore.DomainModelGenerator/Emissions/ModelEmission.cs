@@ -27,7 +27,8 @@ file static class Impl
 
       var contextParameters =
         group.Contexts.Select(static x => new Parameter(x.ContextType.ToString(), x.ContextType.Name));
-      var dependencyParameters = model.Dependencies.Select(static x => new Parameter(x.DependsOn, x.MappedName));
+      var dependencyParameters =
+        model.Dependencies.Select(static x => new Parameter(GetValidTypeName(x.DependsOn), x.MappedName));
       var parameters = contextParameters.Concat(dependencyParameters).ToArray();
 
       return
@@ -64,6 +65,20 @@ file static class Impl
       var originalName = set.OriginalName;
       return
         $"{accessibility} {newKeyword} {collectionType}<{elementType}> {mappedName} => {contextName}.{originalName};";
+    }
+
+    private static string GetValidTypeName(Type type)
+    {
+      // For nested types, FullName uses a '+' separator, which needs to be replaced with a '.' for valid C# syntax.
+      // e.g., "MyNamespace.OuterClass+InnerClass" -> "MyNamespace.OuterClass.InnerClass"
+      var typeName = type.FullName?.Replace('+', '.') ?? type.Name;
+
+      if (!type.IsGenericType) return typeName;
+
+      var genericTypeName = typeName.Substring(0, typeName.IndexOf('`'));
+      var genericArgs = string.Join(", ", type.GetGenericArguments().Select(GetValidTypeName));
+
+      return $"{genericTypeName}<{genericArgs}>";
     }
   }
 }

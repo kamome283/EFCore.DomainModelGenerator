@@ -30,13 +30,13 @@ internal static class CollectModels
     return new ModelMetadata { DomainName = domainName, PartialModel = modelSymbol, Dependencies = dependencies };
   }
 
-  private static (string DependsOn, string MappedName) GetDependency(AttributeData dependencyAttribute)
+  private static ModelDependency GetDependency(AttributeData dependencyAttribute)
   {
     var dependsOn = dependencyAttribute.GetArgumentAt(0) as Type
                     ?? throw new CollectModelsException("dependsOn");
     var mappedName = dependencyAttribute.GetArgumentAt(1) as string;
     mappedName ??= dependsOn.Name;
-    return (dependsOn.FullName, mappedName);
+    return new ModelDependency() { DependsOn = dependsOn, MappedName = mappedName };
   }
 }
 
@@ -44,9 +44,15 @@ internal record ModelMetadata
 {
   public string DomainName { get; set; } = null!;
   public INamedTypeSymbol? PartialModel { get; set; }
-  public IEnumerable<(string DependsOn, string MappedName)> Dependencies { get; set; } = [];
+  public IEnumerable<ModelDependency> Dependencies { get; set; } = [];
 
   public string ModelName => PartialModel?.Name ?? $"{DomainName}Domain";
+}
+
+internal record ModelDependency
+{
+  public Type DependsOn { get; set; } = null!;
+  public string MappedName { get; set; } = null!;
 }
 
 internal class CollectModelsException(string segment) : InvalidOperationException(segment);
