@@ -52,8 +52,6 @@ internal record SetMetadata
   public ITypeSymbol ElementType { get; set; } = null!;
   public string ReadonlyAccessibility { get; set; } = null!;
   public string WritableAccessibility { get; set; } = null!;
-
-  public string ModelName => $"{DomainName}Domain";
 }
 
 internal class CollectSetsException(string segment) : InvalidOperationException(segment);

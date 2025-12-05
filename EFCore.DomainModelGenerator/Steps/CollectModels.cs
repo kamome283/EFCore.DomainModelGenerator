@@ -11,18 +11,23 @@ internal static class CollectModels
 
   public static ModelMetadata Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
-    var symbol =
+    var modelSymbol =
       source.TargetSymbol as INamedTypeSymbol
       ?? throw new CollectModelsException("symbol");
 
-    var modelName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+    var modelAttr =
+      modelSymbol.GetAttributesOf($"{GeneratorNamespace}.{TargetAttribute}").SingleOrDefault()
+      ?? throw new CollectModelsException("modelAttr");
+    var domainName =
+      modelAttr.GetArgumentAt(0) as string
+      ?? throw new CollectModelsException("domainName");
 
     var dependsOnAttrs =
-      symbol.GetAttributesOf($"{GeneratorNamespace}.{DependsOnAttribute}");
+      modelSymbol.GetAttributesOf($"{GeneratorNamespace}.{DependsOnAttribute}");
     var dependencies =
       dependsOnAttrs.Select(GetDependency);
 
-    return new ModelMetadata { ModelName = modelName, Dependencies = dependencies };
+    return new ModelMetadata { DomainName = domainName, PartialModel = modelSymbol, Dependencies = dependencies };
   }
 
   private static (string DependsOn, string MappedName) GetDependency(AttributeData dependencyAttribute)
@@ -37,8 +42,11 @@ internal static class CollectModels
 
 internal record ModelMetadata
 {
-  public string ModelName { get; set; } = null!;
+  public string DomainName { get; set; } = null!;
+  public INamedTypeSymbol? PartialModel { get; set; }
   public IEnumerable<(string DependsOn, string MappedName)> Dependencies { get; set; } = [];
+
+  public string ModelName => PartialModel?.Name ?? $"{DomainName}Domain";
 }
 
 internal class CollectModelsException(string segment) : InvalidOperationException(segment);
