@@ -6,15 +6,22 @@ using static Common;
 
 internal static class CollectModels
 {
-  public const string TargetAttribute = "DomainModelDependsOn";
+  public const string TargetAttribute = "DomainModelAttribute";
+  private const string DependsOnAttribute = "DomainModelDependsOnAttribute";
 
   public static ModelMetadata Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
-    var symbol = source.TargetSymbol as INamedTypeSymbol ?? throw new CollectModelsException("symbol");
+    var symbol =
+      source.TargetSymbol as INamedTypeSymbol
+      ?? throw new CollectModelsException("symbol");
+
     var modelName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-    var dependencies = symbol
-      .GetAttributesOf($"{GeneratorNamespace}.{TargetAttribute}")
-      .Select(GetDependency);
+
+    var dependsOnAttrs =
+      symbol.GetAttributesOf($"{GeneratorNamespace}.{DependsOnAttribute}");
+    var dependencies =
+      dependsOnAttrs.Select(GetDependency);
+
     return new ModelMetadata { ModelName = modelName, Dependencies = dependencies };
   }
 
