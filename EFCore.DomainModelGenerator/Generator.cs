@@ -55,6 +55,7 @@ public class Generator : IIncrementalGenerator
           config, analyzedContexts.ToArray(), analyzedModels.ToArray(), analyzedSets.ToArray(), token);
       });
 
+    context.RegisterSourceOutput(groups, ReportDiagnostics.Report);
     context.RegisterSourceOutput(
       groups,
       EmissionHelper.AdaptForAnalysisResult<IEnumerable<MetadataGroup>>(ModelEmission.Emit));
