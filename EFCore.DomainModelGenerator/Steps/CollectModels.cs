@@ -1,3 +1,4 @@
+using EFCore.DomainModelGenerator.AnalysisResult;
 using Microsoft.CodeAnalysis;
 
 namespace EFCore.DomainModelGenerator.Steps;
@@ -9,7 +10,7 @@ internal static class CollectModels
   public const string TargetAttribute = "DomainModelAttribute";
   private const string DependsOnAttribute = "DomainModelDependsOnAttribute";
 
-  public static ModelMetadata Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
+  public static AnalysisResult<ModelMetadata> Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
     var modelSymbol =
       source.TargetSymbol as INamedTypeSymbol
@@ -27,7 +28,10 @@ internal static class CollectModels
     var dependencies =
       dependsOnAttrs.Select(GetDependency);
 
-    return new ModelMetadata { DomainName = domainName, PartialModel = modelSymbol, Dependencies = dependencies };
+    return new AnalysisResult<ModelMetadata>
+    {
+      Result = new ModelMetadata { DomainName = domainName, PartialModel = modelSymbol, Dependencies = dependencies },
+    };
   }
 
   private static ModelDependency GetDependency(AttributeData dependencyAttribute)
