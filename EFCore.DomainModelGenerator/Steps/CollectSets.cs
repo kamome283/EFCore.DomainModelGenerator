@@ -1,3 +1,4 @@
+using EFCore.DomainModelGenerator.AnalysisResult;
 using Microsoft.CodeAnalysis;
 
 namespace EFCore.DomainModelGenerator.Steps;
@@ -8,7 +9,7 @@ internal static class CollectSets
 {
   public const string TargetAttribute = "DomainSetAttribute";
 
-  public static SetMetadata Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
+  public static AnalysisResult<SetMetadata> Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
     var symbol = source.TargetSymbol as IPropertySymbol ?? throw new CollectSetsException("symbol");
     var propType = symbol.Type as INamedTypeSymbol;
@@ -16,18 +17,22 @@ internal static class CollectSets
       throw new CollectSetsException("propType");
     var attr = symbol.GetAttributesOf($"{GeneratorNamespace}.{TargetAttribute}").SingleOrDefault()
                ?? throw new CollectSetsException("attr");
-    return new SetMetadata
+
+    return new AnalysisResult<SetMetadata>
     {
-      ParentType = symbol.ContainingType as ITypeSymbol ??
-                   throw new CollectSetsException("ParentType"),
-      DomainName = attr.GetArgumentAt(0) as string ?? symbol.Name,
-      MappedName = attr.GetArgumentAt(1) as string ?? symbol.Name,
-      OriginalName = symbol.Name,
-      ElementType = propType.TypeArguments.Single(),
-      ReadonlyAccessibility = GetAccessibility(attr.GetArgumentAt(2) as int?)
-                              ?? throw new CollectSetsException("ReadonlyAccessibility"),
-      WritableAccessibility = GetAccessibility(attr.GetArgumentAt(3) as int?)
-                              ?? throw new CollectSetsException("WritableAccessibility"),
+      Result = new SetMetadata
+      {
+        ParentType = symbol.ContainingType as ITypeSymbol ??
+                     throw new CollectSetsException("ParentType"),
+        DomainName = attr.GetArgumentAt(0) as string ?? symbol.Name,
+        MappedName = attr.GetArgumentAt(1) as string ?? symbol.Name,
+        OriginalName = symbol.Name,
+        ElementType = propType.TypeArguments.Single(),
+        ReadonlyAccessibility = GetAccessibility(attr.GetArgumentAt(2) as int?)
+                                ?? throw new CollectSetsException("ReadonlyAccessibility"),
+        WritableAccessibility = GetAccessibility(attr.GetArgumentAt(3) as int?)
+                                ?? throw new CollectSetsException("WritableAccessibility"),
+      },
     };
   }
 
