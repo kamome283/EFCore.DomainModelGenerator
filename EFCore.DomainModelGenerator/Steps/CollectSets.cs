@@ -12,6 +12,8 @@ internal static class CollectSets
 
   public static AnalysisResult<SetMetadata> Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
+    var errorDiagnostics = new List<Diagnostic>();
+
     var symbol = source.TargetSymbol as IPropertySymbol ?? throw new CollectSetsException("symbol");
     var propType = symbol.Type as INamedTypeSymbol;
     if (propType is null or not { IsGenericType: true, ConstructedFrom.Name: "DbSet" })
@@ -32,7 +34,28 @@ internal static class CollectSets
       var diagnostic =
         Diagnostic.Create(
           DiagnosticDescriptors.DomainSetOutsideDomainContext, node.Identifier.GetLocation(), symbol.Name);
-      return new AnalysisResult<SetMetadata> { Diagnostics = [diagnostic] };
+      errorDiagnostics.Add(diagnostic);
+    }
+
+    var domainName = attr.GetArgumentAt(0) as string ?? symbol.Name;
+    if (domainName is "")
+    {
+      errorDiagnostics.Add(
+        Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, attr.GetLocationAt(0), "domainName")
+      );
+    }
+
+    var mappedName = attr.GetArgumentAt(1) as string ?? symbol.Name;
+    if (mappedName is "")
+    {
+      errorDiagnostics.Add(
+        Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, attr.GetLocationAt(1), "mappedName")
+      );
+    }
+
+    if (errorDiagnostics.Count != 0)
+    {
+      return new AnalysisResult<SetMetadata> { Diagnostics = errorDiagnostics };
     }
 
     return new AnalysisResult<SetMetadata>
@@ -40,8 +63,8 @@ internal static class CollectSets
       Result = new SetMetadata
       {
         ParentType = parentType,
-        DomainName = attr.GetArgumentAt(0) as string ?? symbol.Name,
-        MappedName = attr.GetArgumentAt(1) as string ?? symbol.Name,
+        DomainName = domainName,
+        MappedName = mappedName,
         OriginalName = symbol.Name,
         ElementType = propType.TypeArguments.Single(),
         ReadonlyAccessibility = GetAccessibility(attr.GetArgumentAt(2) as int?)
