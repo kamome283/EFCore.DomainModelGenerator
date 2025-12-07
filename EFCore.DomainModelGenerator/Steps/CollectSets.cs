@@ -39,8 +39,7 @@ internal static class CollectSets
     {
       Result = new SetMetadata
       {
-        ParentType = symbol.ContainingType as ITypeSymbol ??
-                     throw new CollectSetsException("ParentType"),
+        ParentType = parentType,
         DomainName = attr.GetArgumentAt(0) as string ?? symbol.Name,
         MappedName = attr.GetArgumentAt(1) as string ?? symbol.Name,
         OriginalName = symbol.Name,
