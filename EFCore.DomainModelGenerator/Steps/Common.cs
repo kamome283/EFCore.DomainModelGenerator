@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EFCore.DomainModelGenerator.Steps;
 
@@ -12,8 +13,18 @@ internal static class Common
       x.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == fullyQualifiedName);
   }
 
-  public static object? GetArgumentAt(this AttributeData attribute, int index)
+  extension(AttributeData attribute)
   {
-    return attribute.ConstructorArguments.ElementAtOrDefault(index).Value;
+    public object? GetArgumentAt(int index)
+    {
+      return attribute.ConstructorArguments.ElementAtOrDefault(index).Value;
+    }
+
+    public Location? GetLocationAt(int index)
+    {
+      var syntax = attribute.ApplicationSyntaxReference?.GetSyntax() as AttributeSyntax;
+      return syntax?.ArgumentList?.Arguments.ElementAtOrDefault(index)?.GetLocation()
+             ?? syntax?.GetLocation();
+    }
   }
 }
