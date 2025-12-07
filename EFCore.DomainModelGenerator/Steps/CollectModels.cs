@@ -12,6 +12,8 @@ internal static class CollectModels
 
   public static AnalysisResult<ModelMetadata> Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
+    var errorDiagnostics = new List<Diagnostic>();
+
     var modelSymbol =
       source.TargetSymbol as INamedTypeSymbol
       ?? throw new CollectModelsException("symbol");
@@ -19,28 +21,49 @@ internal static class CollectModels
     var modelAttr =
       modelSymbol.GetAttributesOf($"{GeneratorNamespace}.{TargetAttribute}").SingleOrDefault()
       ?? throw new CollectModelsException("modelAttr");
-    var domainName =
-      modelAttr.GetArgumentAt(0) as string
-      ?? throw new CollectModelsException("domainName");
+    var domainName = modelAttr.GetArgumentAt(0) as string;
+    if (domainName is null or "")
+    {
+      errorDiagnostics.Add(
+        Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, modelAttr.GetLocationAt(0), "domainName")
+      );
+    }
 
     var dependsOnAttrs =
       modelSymbol.GetAttributesOf($"{GeneratorNamespace}.{DependsOnAttribute}");
-    var dependencies =
-      dependsOnAttrs.Select(GetDependency);
+    var dependencies = new List<ModelDependency>();
+    foreach (var attr in dependsOnAttrs)
+    {
+      var (dependency, errorDiagnostic) = GetDependency(attr);
+      if (dependency is not null) dependencies.Add(dependency);
+      if (errorDiagnostic is not null) errorDiagnostics.Add(errorDiagnostic);
+    }
 
+    if (errorDiagnostics.Count != 0) return new AnalysisResult<ModelMetadata> { Diagnostics = errorDiagnostics };
+    // If this condition is true, error diagnostics should have been returned,
+    // and if this is met, it's something wrong.
+    if (domainName is null or "") throw new CollectModelsException("domainName");
     return new AnalysisResult<ModelMetadata>
     {
       Result = new ModelMetadata { DomainName = domainName, PartialModel = modelSymbol, Dependencies = dependencies },
     };
   }
 
-  private static ModelDependency GetDependency(AttributeData dependencyAttribute)
+  private static (ModelDependency?, Diagnostic?) GetDependency(AttributeData dependencyAttribute)
   {
     var dependsOn = dependencyAttribute.GetArgumentAt(0) as Type
                     ?? throw new CollectModelsException("dependsOn");
     var mappedName = dependencyAttribute.GetArgumentAt(1) as string;
     mappedName ??= dependsOn.Name;
-    return new ModelDependency { DependsOn = dependsOn, MappedName = mappedName };
+    if (mappedName is "")
+    {
+      var diagnostic = Diagnostic.Create(
+        DiagnosticDescriptors.EmptyStringNotAllowed, dependencyAttribute.GetLocationAt(1), "mappedName"
+      );
+      return (null, diagnostic);
+    }
+
+    return (new ModelDependency { DependsOn = dependsOn, MappedName = mappedName }, null);
   }
 }
 

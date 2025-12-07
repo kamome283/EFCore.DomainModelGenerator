@@ -11,4 +11,12 @@ internal static class DiagnosticDescriptors
     category: "Usage",
     defaultSeverity: DiagnosticSeverity.Error,
     isEnabledByDefault: true);
+
+  public static readonly DiagnosticDescriptor EmptyStringNotAllowed = new(
+    id: "EFDMG0002",
+    title: "Empty string not allowed",
+    messageFormat: "The string value for '{0}' cannot be empty",
+    category: "Usage",
+    defaultSeverity: DiagnosticSeverity.Error,
+    isEnabledByDefault: true);
 }
