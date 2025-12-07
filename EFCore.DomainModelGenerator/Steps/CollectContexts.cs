@@ -1,3 +1,4 @@
+using EFCore.DomainModelGenerator.AnalysisResult;
 using Microsoft.CodeAnalysis;
 
 namespace EFCore.DomainModelGenerator.Steps;
@@ -6,12 +7,12 @@ internal static class CollectContexts
 {
   public const string TargetAttribute = "DomainContextAttribute";
 
-  public static ContextMetadata Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
+  public static AnalysisResult<ContextMetadata> Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
     var symbol = source.TargetSymbol as INamedTypeSymbol ?? throw new CollectContextsException("symbol");
-    return new ContextMetadata
+    return new AnalysisResult<ContextMetadata>
     {
-      ContextType = symbol,
+      Result = new ContextMetadata { ContextType = symbol },
     };
   }
 }

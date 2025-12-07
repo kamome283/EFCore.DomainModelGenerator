@@ -1,3 +1,4 @@
+using EFCore.DomainModelGenerator.AnalysisResult;
 using EFCore.DomainModelGenerator.ConstantSource;
 using EFCore.DomainModelGenerator.Emissions;
 using EFCore.DomainModelGenerator.Steps;
@@ -47,13 +48,19 @@ public class Generator : IIncrementalGenerator
       .Combine(models)
       .Select(static (ccsm, token) =>
       {
-        var (ccs, models) = ccsm;
-        var (cc, sets) = ccs;
-        var (config, contexts) = cc;
-        return CombineMetadata.Combine(config, contexts, models, sets, token);
+        var (ccs, analyzedModels) = ccsm;
+        var (cc, analyzedSets) = ccs;
+        var (config, analyzedContexts) = cc;
+        return CombineMetadata.Combine(
+          config, analyzedContexts.ToArray(), analyzedModels.ToArray(), analyzedSets.ToArray(), token);
       });
 
-    context.RegisterSourceOutput(groups, ModelEmission.Emit);
-    context.RegisterSourceOutput(groups, RegistratorEmission.Emit);
+    context.RegisterSourceOutput(groups, ReportDiagnostics.Report);
+    context.RegisterSourceOutput(
+      groups,
+      EmissionHelper.AdaptForAnalysisResult<IEnumerable<MetadataGroup>>(ModelEmission.Emit));
+    context.RegisterSourceOutput(
+      groups,
+      EmissionHelper.AdaptForAnalysisResult<IEnumerable<MetadataGroup>>(RegistratorEmission.Emit));
   }
 }
