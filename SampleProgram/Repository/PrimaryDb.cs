@@ -15,3 +15,10 @@ public class PrimaryDb(DbContextOptions<PrimaryDb> options) : DbContext(options)
 
   [DomainSet] internal DbSet<Customer> Customers { get; init; }
 }
+
+// // If DomainSet is used outside DomainContext, a diagnostic error will be issued.
+//
+// public class NonDomainSetContext(DbContextOptions<NonDomainSetContext> options) : DbContext(options)
+// {
+//   [DomainSet] internal DbSet<Staff> SecondaryStaffs { get; init; }
+// }
