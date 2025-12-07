@@ -1,5 +1,6 @@
 using EFCore.DomainModelGenerator.AnalysisResult;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EFCore.DomainModelGenerator.Steps;
 
@@ -12,6 +13,8 @@ internal static class CollectModels
 
   public static AnalysisResult<ModelMetadata> Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
+    var errorDiagnostics = new List<Diagnostic>();
+
     var modelSymbol =
       source.TargetSymbol as INamedTypeSymbol
       ?? throw new CollectModelsException("symbol");
@@ -19,15 +22,26 @@ internal static class CollectModels
     var modelAttr =
       modelSymbol.GetAttributesOf($"{GeneratorNamespace}.{TargetAttribute}").SingleOrDefault()
       ?? throw new CollectModelsException("modelAttr");
-    var domainName =
-      modelAttr.GetArgumentAt(0) as string
-      ?? throw new CollectModelsException("domainName");
+    var domainName = modelAttr.GetArgumentAt(0) as string;
+    if (domainName is null or "")
+    {
+      var attributeSyntax = modelAttr.ApplicationSyntaxReference?.GetSyntax() as AttributeSyntax;
+      var location = attributeSyntax?.ArgumentList?.Arguments.FirstOrDefault()?.GetLocation()
+                     ?? attributeSyntax?.GetLocation()
+                     ?? source.TargetNode.GetLocation();
+      errorDiagnostics.Add(
+        Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, location, "domainName"));
+    }
 
     var dependsOnAttrs =
       modelSymbol.GetAttributesOf($"{GeneratorNamespace}.{DependsOnAttribute}");
     var dependencies =
       dependsOnAttrs.Select(GetDependency);
 
+    if (errorDiagnostics.Count != 0) return new AnalysisResult<ModelMetadata> { Diagnostics = errorDiagnostics };
+    // If this condition is true, error diagnostics should have been returned,
+    // and if this is met, it's something wrong.
+    if (domainName is null or "") throw new CollectModelsException("domainName");
     return new AnalysisResult<ModelMetadata>
     {
       Result = new ModelMetadata { DomainName = domainName, PartialModel = modelSymbol, Dependencies = dependencies },
