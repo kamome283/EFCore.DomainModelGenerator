@@ -13,10 +13,6 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild> <!-- Generates a package at build -->
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking> <!-- Suppress NU5128 warning-->
-    <!-- The release tracking analyzer is written according to the format described in the Roslyn documentation
-    (https://github.com/dotnet/roslyn/blob/main/src/RoslynAnalyzers/Microsoft.CodeAnalysis.Analyzers/ReleaseTrackingAnalyzers.Help.md),
-    but the Roslyn implementation seems to be different, causing warnings. Therefore, this warning is disabled until the implementation or documentation is improved. -->
-    <NoWarn>RS2007</NoWarn>
 
     <Version>0.0.5</Version>
     <Authors>kamome283</Authors>
