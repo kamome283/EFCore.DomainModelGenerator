@@ -6,3 +6,4 @@
 | Rule ID   | Category | Severity | Notes                         |
 |-----------|----------|----------|-------------------------------|
 | EFDMG0001 | Usage    | Error    | DomainSetOutsideDomainContext |
+| EFDMG0002 | Usage    | Error    | EmptyStringNotAllowed         |
