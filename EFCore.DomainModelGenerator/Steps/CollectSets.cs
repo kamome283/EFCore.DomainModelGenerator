@@ -1,5 +1,6 @@
 using EFCore.DomainModelGenerator.AnalysisResult;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EFCore.DomainModelGenerator.Steps;
 
@@ -18,12 +19,27 @@ internal static class CollectSets
     var attr = symbol.GetAttributesOf($"{GeneratorNamespace}.{TargetAttribute}").SingleOrDefault()
                ?? throw new CollectSetsException("attr");
 
+    var parentType =
+      symbol.ContainingType as ITypeSymbol
+      ?? throw new CollectSetsException("ParentType");
+    var domainContextAttr =
+      parentType.GetAttributesOf($"{GeneratorNamespace}.{CollectContexts.TargetAttribute}").SingleOrDefault();
+    if (domainContextAttr is null)
+    {
+      var node =
+        source.TargetNode as PropertyDeclarationSyntax
+        ?? throw new CollectSetsException("node");
+      var diagnostic =
+        Diagnostic.Create(
+          DiagnosticDescriptors.DomainSetOutsideDomainContext, node.Identifier.GetLocation(), symbol.Name);
+      return new AnalysisResult<SetMetadata> { Diagnostics = [diagnostic] };
+    }
+
     return new AnalysisResult<SetMetadata>
     {
       Result = new SetMetadata
       {
-        ParentType = symbol.ContainingType as ITypeSymbol ??
-                     throw new CollectSetsException("ParentType"),
+        ParentType = parentType,
         DomainName = attr.GetArgumentAt(0) as string ?? symbol.Name,
         MappedName = attr.GetArgumentAt(1) as string ?? symbol.Name,
         OriginalName = symbol.Name,
