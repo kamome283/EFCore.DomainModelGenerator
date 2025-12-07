@@ -35,8 +35,13 @@ internal static class CollectModels
 
     var dependsOnAttrs =
       modelSymbol.GetAttributesOf($"{GeneratorNamespace}.{DependsOnAttribute}");
-    var dependencies =
-      dependsOnAttrs.Select(GetDependency);
+    var dependencies = new List<ModelDependency>();
+    foreach (var attr in dependsOnAttrs)
+    {
+      var (dependency, errorDiagnostic) = GetDependency(attr);
+      if (dependency is not null) dependencies.Add(dependency);
+      if (errorDiagnostic is not null) errorDiagnostics.Add(errorDiagnostic);
+    }
 
     if (errorDiagnostics.Count != 0) return new AnalysisResult<ModelMetadata> { Diagnostics = errorDiagnostics };
     // If this condition is true, error diagnostics should have been returned,
@@ -48,13 +53,23 @@ internal static class CollectModels
     };
   }
 
-  private static ModelDependency GetDependency(AttributeData dependencyAttribute)
+  private static (ModelDependency?, Diagnostic?) GetDependency(AttributeData dependencyAttribute)
   {
     var dependsOn = dependencyAttribute.GetArgumentAt(0) as Type
                     ?? throw new CollectModelsException("dependsOn");
     var mappedName = dependencyAttribute.GetArgumentAt(1) as string;
     mappedName ??= dependsOn.Name;
-    return new ModelDependency { DependsOn = dependsOn, MappedName = mappedName };
+    if (mappedName is "")
+    {
+      var attributeSyntax = dependencyAttribute.ApplicationSyntaxReference?.GetSyntax() as AttributeSyntax;
+      var location =
+        attributeSyntax?.ArgumentList?.Arguments.ElementAtOrDefault(1)?.GetLocation()
+        ?? attributeSyntax?.GetLocation();
+      var diagnostic = Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, location, "mappedName");
+      return (null, diagnostic);
+    }
+
+    return (new ModelDependency { DependsOn = dependsOn, MappedName = mappedName }, null);
   }
 }
 
