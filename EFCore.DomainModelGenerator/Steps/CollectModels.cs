@@ -1,6 +1,5 @@
 using EFCore.DomainModelGenerator.AnalysisResult;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EFCore.DomainModelGenerator.Steps;
 
@@ -25,12 +24,9 @@ internal static class CollectModels
     var domainName = modelAttr.GetArgumentAt(0) as string;
     if (domainName is null or "")
     {
-      var attributeSyntax = modelAttr.ApplicationSyntaxReference?.GetSyntax() as AttributeSyntax;
-      var location = attributeSyntax?.ArgumentList?.Arguments.FirstOrDefault()?.GetLocation()
-                     ?? attributeSyntax?.GetLocation()
-                     ?? source.TargetNode.GetLocation();
       errorDiagnostics.Add(
-        Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, location, "domainName"));
+        Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, modelAttr.GetLocationAt(0), "domainName")
+      );
     }
 
     var dependsOnAttrs =
@@ -61,11 +57,9 @@ internal static class CollectModels
     mappedName ??= dependsOn.Name;
     if (mappedName is "")
     {
-      var attributeSyntax = dependencyAttribute.ApplicationSyntaxReference?.GetSyntax() as AttributeSyntax;
-      var location =
-        attributeSyntax?.ArgumentList?.Arguments.ElementAtOrDefault(1)?.GetLocation()
-        ?? attributeSyntax?.GetLocation();
-      var diagnostic = Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, location, "mappedName");
+      var diagnostic = Diagnostic.Create(
+        DiagnosticDescriptors.EmptyStringNotAllowed, dependencyAttribute.GetLocationAt(1), "mappedName"
+      );
       return (null, diagnostic);
     }
 
