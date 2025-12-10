@@ -50,7 +50,7 @@ internal static class CollectModels
 
   private static (ModelDependency?, Diagnostic?) GetDependency(AttributeData dependencyAttribute)
   {
-    var dependsOn = dependencyAttribute.GetArgumentAt(0) as Type
+    var dependsOn = dependencyAttribute.GetArgumentAt(0) as INamedTypeSymbol
                     ?? throw new CollectModelsException("dependsOn");
     var mappedName = dependencyAttribute.GetArgumentAt(1) as string;
     mappedName ??= dependsOn.Name;
@@ -77,7 +77,7 @@ internal record ModelMetadata
 
 internal record ModelDependency
 {
-  public Type DependsOn { get; set; } = null!;
+  public INamedTypeSymbol DependsOn { get; set; } = null!;
   public string MappedName { get; set; } = null!;
 }
 
