@@ -4,7 +4,7 @@ using SampleProgram.Entities;
 
 namespace SampleProgram.Domains;
 
-// [DomainModelDependsOn(typeof(CustomersDomain))]
+[DomainModelDependsOn(typeof(CustomersDomain))]
 [DomainModel("Staffs")]
 public partial class StaffsDomain
 {
