@@ -12,7 +12,7 @@ internal static class CollectSets
 
   public static AnalysisResult<SetMetadata> Collect(GeneratorAttributeSyntaxContext source, CancellationToken _)
   {
-    var errorDiagnostics = new List<Diagnostic>();
+    var result = new AnalysisResult<SetMetadata>();
 
     var symbol = source.TargetSymbol as IPropertySymbol ?? throw new CollectSetsException("symbol");
     var propType = symbol.Type as INamedTypeSymbol;
@@ -34,13 +34,13 @@ internal static class CollectSets
       var diagnostic =
         Diagnostic.Create(
           DiagnosticDescriptors.DomainSetOutsideDomainContext, node.Identifier.GetLocation(), symbol.Name);
-      errorDiagnostics.Add(diagnostic);
+      result.Diagnostics.Add(diagnostic);
     }
 
     var domainName = attr.GetArgumentAt(0) as string ?? symbol.Name;
     if (domainName is "")
     {
-      errorDiagnostics.Add(
+      result.Diagnostics.Add(
         Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, attr.GetLocationAt(0), "domainName")
       );
     }
@@ -48,17 +48,14 @@ internal static class CollectSets
     var mappedName = attr.GetArgumentAt(1) as string ?? symbol.Name;
     if (mappedName is "")
     {
-      errorDiagnostics.Add(
+      result.Diagnostics.Add(
         Diagnostic.Create(DiagnosticDescriptors.EmptyStringNotAllowed, attr.GetLocationAt(1), "mappedName")
       );
     }
 
-    if (errorDiagnostics.Count != 0)
-    {
-      return new AnalysisResult<SetMetadata> { Diagnostics = errorDiagnostics };
-    }
+    if (result.HasErrorDiagnostic()) return result;
 
-    return new AnalysisResult<SetMetadata>
+    return result with
     {
       Result = new SetMetadata
       {

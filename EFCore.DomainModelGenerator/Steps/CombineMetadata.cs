@@ -12,20 +12,20 @@ internal static class CombineMetadata
     // ReSharper disable once UnusedParameter.Global
     CancellationToken ct)
   {
-    var diagnostics = analyzedConfig.Diagnostics.ToList();
+    var result = new AnalysisResult<IEnumerable<MetadataGroup>>();
     foreach (var x in analyzedContexts)
     {
-      diagnostics.AddRange(x.Diagnostics);
+      result.Diagnostics.AddRange(x.Diagnostics);
     }
 
     foreach (var x in analyzedMarkedModels)
     {
-      diagnostics.AddRange(x.Diagnostics);
+      result.Diagnostics.AddRange(x.Diagnostics);
     }
 
     foreach (var x in analyzedSets)
     {
-      diagnostics.AddRange(x.Diagnostics);
+      result.Diagnostics.AddRange(x.Diagnostics);
     }
 
     var validContexts =
@@ -59,17 +59,10 @@ internal static class CombineMetadata
       correspondingGroup.AddContextIfNotExist(correspondingContext);
     }
 
-    if (analyzedConfig.Result is null)
-    {
-      return new AnalysisResult<IEnumerable<MetadataGroup>> { Diagnostics = diagnostics };
-    }
+    if (analyzedConfig.Result is null) throw new CombineMetadataException("analyzedConfig");
 
     var groups = groupMap.Values.Select(x => x.ToContextMetadata(analyzedConfig.Result));
-    return new AnalysisResult<IEnumerable<MetadataGroup>>
-    {
-      Diagnostics = diagnostics,
-      Result = groups,
-    };
+    return result with { Result = groups };
   }
 
   private record Group
