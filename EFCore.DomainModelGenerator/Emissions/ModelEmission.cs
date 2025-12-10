@@ -26,9 +26,9 @@ file static class Impl
       var sets = group.Sets.ToArray();
 
       var contextParameters =
-        group.Contexts.Select(static x => new Parameter(x.ContextType.ToString(), x.ContextType.Name));
+        group.Contexts.Select(static x => new Parameter(x.ContextType, x.ContextType.Name));
       var dependencyParameters =
-        model.Dependencies.Select(static x => new Parameter(GetValidTypeName(x.DependsOn), x.MappedName));
+        model.Dependencies.Select(static x => new Parameter(x.DependsOn, x.MappedName));
       var parameters = contextParameters.Concat(dependencyParameters).ToArray();
 
       return
@@ -66,25 +66,11 @@ file static class Impl
       return
         $"{accessibility} {newKeyword} {collectionType}<{elementType}> {mappedName} => {contextName}.{originalName};";
     }
-
-    private static string GetValidTypeName(Type type)
-    {
-      // For nested types, FullName uses a '+' separator, which needs to be replaced with a '.' for valid C# syntax.
-      // e.g., "MyNamespace.OuterClass+InnerClass" -> "MyNamespace.OuterClass.InnerClass"
-      var typeName = type.FullName?.Replace('+', '.') ?? type.Name;
-
-      if (!type.IsGenericType) return typeName;
-
-      var genericTypeName = typeName.Substring(0, typeName.IndexOf('`'));
-      var genericArgs = string.Join(", ", type.GetGenericArguments().Select(GetValidTypeName));
-
-      return $"{genericTypeName}<{genericArgs}>";
-    }
   }
 }
 
 // ReSharper disable once StructCanBeMadeReadOnly
-file record struct Parameter(string Type, string Name)
+file record struct Parameter(INamedTypeSymbol Type, string Name)
 {
   public string MaskedName => $"_{Name}";
 }
