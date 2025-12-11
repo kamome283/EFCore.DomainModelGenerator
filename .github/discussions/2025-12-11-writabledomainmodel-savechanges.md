@@ -1,1 +1,0 @@
-WritableDomainModel で DbContext の SaveChanges と SaveChangesAsync メソッドを公開する
