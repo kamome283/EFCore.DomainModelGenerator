@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SampleProgram;
-using SampleProgram.Domains;
+using SampleProgram.Domains.Customers;
+using SampleProgram.Domains.DomainRegistration;
+using SampleProgram.Domains.Staffs;
 using SampleProgram.Repository;
 
 var builder = Host.CreateApplicationBuilder(args);

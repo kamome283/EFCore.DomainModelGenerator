@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <EFCoreDomainModelGenerator_DomainNamespace>SampleProgram.Domains</EFCoreDomainModelGenerator_DomainNamespace>
+    <EFCoreDomainModelGenerator_ModelNamespace>SampleProgram.Domains.{DomainName}</EFCoreDomainModelGenerator_ModelNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <CompilerVisibleProperty Include="EFCoreDomainModelGenerator_DomainNamespace"/>
+    <CompilerVisibleProperty Include="EFCoreDomainModelGenerator_ModelNamespace"/>
   </ItemGroup>
 </Project>
