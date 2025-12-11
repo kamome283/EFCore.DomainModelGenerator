@@ -2,9 +2,9 @@ using EFCore.DomainModelGenerator;
 using Microsoft.EntityFrameworkCore;
 using SampleProgram.Entities;
 
-namespace SampleProgram.Domains;
+namespace SampleProgram.Domains.Staffs;
 
-[DomainModelDependsOn(typeof(CustomersDomain))]
+[DomainModelDependsOn(typeof(Customers.CustomersDomain))]
 [DomainModel("Staffs")]
 public partial class StaffsDomain
 {

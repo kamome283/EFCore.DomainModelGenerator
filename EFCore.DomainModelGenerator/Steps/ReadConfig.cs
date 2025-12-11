@@ -23,5 +23,14 @@ internal static class ReadConfig
 
 internal record GeneratorConfig
 {
+  private const string ReplaceTarget = "{DomainName}";
+
   public string ModelNamespace { get; set; } = null!;
+
+  // See also #102
+  public string DomainRegistrationNamespace =>
+    ModelNamespace.Replace(ReplaceTarget, "DomainRegistration");
+
+  public string GetDomainNamespace(string domainName) =>
+    ModelNamespace.Replace(ReplaceTarget, domainName);
 }
