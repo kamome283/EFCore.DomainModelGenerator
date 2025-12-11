@@ -13,6 +13,7 @@ internal static class ReadConfig
     var modelNamespace = options.GlobalOptions.TryGetValue(ModelNamespaceConfigKey, out var maybeModelNamespace)
       ? maybeModelNamespace
       : DefaultNamespace;
+    modelNamespace = modelNamespace.Trim();
     return new AnalysisResult<GeneratorConfig>
     {
       Result = new GeneratorConfig { ModelNamespace = modelNamespace },
