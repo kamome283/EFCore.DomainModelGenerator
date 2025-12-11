@@ -5,22 +5,22 @@ namespace EFCore.DomainModelGenerator.Steps;
 
 internal static class ReadConfig
 {
-  private const string DomainNamespaceConfigKey = "build_property.EFCoreDomainModelGenerator_DomainNamespace";
+  private const string ModelNamespaceConfigKey = "build_property.EFCoreDomainModelGenerator_ModelNamespace";
   private const string DefaultNamespace = "EFCore.DomainModelGenerator.Domains";
 
   public static AnalysisResult<GeneratorConfig> Read(AnalyzerConfigOptionsProvider options, CancellationToken _)
   {
-    var domainNamespace = options.GlobalOptions.TryGetValue(DomainNamespaceConfigKey, out var maybeDomainNamespace)
-      ? maybeDomainNamespace
+    var modelNamespace = options.GlobalOptions.TryGetValue(ModelNamespaceConfigKey, out var maybeModelNamespace)
+      ? maybeModelNamespace
       : DefaultNamespace;
     return new AnalysisResult<GeneratorConfig>
     {
-      Result = new GeneratorConfig { DomainNamespace = domainNamespace },
+      Result = new GeneratorConfig { ModelNamespace = modelNamespace },
     };
   }
 }
 
 internal record GeneratorConfig
 {
-  public string DomainNamespace { get; set; } = null!;
+  public string ModelNamespace { get; set; } = null!;
 }

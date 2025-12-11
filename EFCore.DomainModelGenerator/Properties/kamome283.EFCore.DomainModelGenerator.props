@@ -1,5 +1,5 @@
 <Project>
   <ItemGroup>
-    <CompilerVisibleProperty Include="EFCoreDomainModelGenerator_DomainNamespace"/>
+    <CompilerVisibleProperty Include="EFCoreDomainModelGenerator_ModelNamespace"/>
   </ItemGroup>
 </Project>
